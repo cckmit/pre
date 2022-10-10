@@ -70,16 +70,16 @@ server:
   tomcat:
     uri-encoding: UTF-8
     max-threads: 1000        #最大并发数
-    max-connections: 20000   #接受和处理的最大链接数
-    min-SpareThreads: 200     #初始化时建立的线程数
-    acceptCount: 700         #能够放处处理队列中的请求数
+    max-connections: 2000   #接受和处理的最大链接数
+    min-SpareThreads: 500     #初始化时建立的线程数
+    acceptCount: 100         #能够放处处理队列中的请求数
   http2:
     enabled: true
   undertow:
     buffer-size: 2048
     direct-buffers: true
-    io-threads: 4
-    worker-threads: 20
+    io-threads: 100
+    worker-threads: 200
 spring:
   activemq:
     broker-url: tcp://127.0.0.1:61616
@@ -96,8 +96,8 @@ spring:
     hikari:
       connection-test-query: SELECT 1
       max-lifetime: 30000
-      maximum-pool-size: 10
-      minimum-idle: 3
+      maximum-pool-size: 100
+      minimum-idle: 30
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql://127.0.0.1:3306/pre?useUnicode=true&useSSL=false&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useAffectedRows=true&allowMultiQueries=true&characterEncoding=utf-8
     username: root

@@ -105,8 +105,8 @@ public class DouyinService {
             return douyinUseStock(jdMchOrder, storeConfig, jdLog, timer, client, jdOrderPtStocks, payReUrl);
         } else {
             log.info("订单号:{}.异步生成一下订单", jdMchOrder.getTradeNo());
-            sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(storeConfig), 2);
-            sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(storeConfig), 2);
+            sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(storeConfig), 5);
+            sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(storeConfig), 15);
             log.info("订单号:{},新下单", jdMchOrder.getTradeNo());
             return douyinProductNewOrder(jdMchOrder, storeConfig, jdLog, timer, client, payReUrl);
         }
