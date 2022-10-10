@@ -1,0 +1,151 @@
+jasypt:
+  encryptor:
+    password: EbfYkitulv73I2p0mXI50JMXoaxZTKJ1
+jwt:
+  header: Authorization
+  tokenHead: 'Bearer '
+mybatis-plus:
+  #  configuration:
+  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl.NoLoggingImpl
+  global-config:
+    db-config:
+      logic-delete-field: delFlag
+  mapper-locations: classpath:mapper/*.xml
+  typeAliasesPackage: com.xd.pre.domain
+pre:
+  security:
+    social:
+      gitee:
+        app-id: 663221d0507f284b2265b7b8d95a9c1293bdd5adc7b4a35c9748fd3875746e67
+        app-secret: 411f5eeabb0365664fc2e82ed735ec688152127838ad145159f19c90170ebde1
+        provider-id: gitee
+      github:
+        app-id: 0e4b224d9c629ce3f3ea
+        app-secret: 31fc9751b005f5e40113fc3f07b5beae0a7dad25
+        provider-id: github
+      qq:
+        app-id: 101715108
+        app-secret: 453e1be400a9cf207fea273f0d2c6248
+        provider-id: qq
+      weixin:
+        app-id: wx27e0de97cfa87385
+        app-secret: 1f8958cc2cb233d7a4f8b7d364bcb72c
+        provider-id: weixin
+  tenant:
+    ignoreTenantTables:
+      - sys_tenant
+      - sys_menu
+      - sys_user_role
+      - sys_role_menu
+      - sys_role_dept
+      - sys_user_role
+      - sys_dict_item
+      - TABLES
+      - COLUMNS
+      - sys_job
+      - jd_app_store_config
+      - jd_local_url
+      - jd_sign_param
+      - jd_ck
+      - jd_ck_zhideng
+      - jd_document
+      - jd_proxy_ip_port
+      - proxy_address_product
+      - jd_path_config
+      - jd_pay_order_post_address
+      - jd_tenant
+      - jd_ex_kami
+      - area_ip
+      - jd_log
+      - douyin_ck
+      - douyin_chongzhi_account
+      - jd_address
+      - wph_account
+      - douyin_device_iid
+    tenantIdColumn: tenant_id
+  url:
+    address: http://localhost:9528
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 100        #最大并发数
+    max-connections: 200   #接受和处理的最大链接数
+    min-SpareThreads: 20     #初始化时建立的线程数
+    acceptCount: 70         #能够放处处理队列中的请求数
+  http2:
+    enabled: true
+  undertow:
+    buffer-size: 2048
+    direct-buffers: true
+    io-threads: 4
+    worker-threads: 20
+spring:
+  activemq:
+    broker-url: tcp://210.16.122.100:61616
+    user: admin
+    password: 1Q2W3E4Rasdf%
+    close-timeout: 0s   # 在考虑结束之前等待的时间
+    in-memory: true      # 默认代理URL是否应该在内存中。如果指定了显式代理，则忽略此值。
+    non-blocking-redelivery: true  # 是否在回滚回滚消息之前停止消息传递。这意味着当启用此命令时，消息顺序不会被保留。
+    send-timeout: 0     # 等待消息发送响应的时间。设置为0等待永远。
+    queue-name: queue.jd
+    topic-name: topic.jd
+    findQueue: findQueue
+    product_stock_queue: product_stock_queue
+    product_proxy_task: product_proxy_task
+    notify_success: notify_success
+    match2_queue: match2_queue
+    product_ip_queue: product_ip_queue
+    check_data_queue: check_data_queue
+    cancel_queue: cancel_queue
+    pool:
+      enabled: true
+      max-connections: 50
+      idle-timeout: 30s
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-test-query: SELECT 1
+      max-lifetime: 30000
+      maximum-pool-size: 30
+      minimum-idle: 10
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://210.16.122.100:3306/pre?useUnicode=true&useSSL=false&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useAffectedRows=true&allowMultiQueries=true
+    username: root
+    password: 1Q2W3E4Rasdf%
+  servlet:
+    multipart:
+      # 根据实际需求作调整
+      # 默认最大上传文件大小为1M，单个文件大小
+      max-file-size: 10MB
+      # 默认最大请求大小为10M，总上传的数据大小
+      max-request-size: 15MB
+  mail:
+    host: smtp.qq.com
+    password: ENC(b1a/IYyqK7WL70rlA7JZxmqqoLDY2rtLvX9cNp5YWP0=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    username: ENC(F+SSuP2w34EywET9mD9eOzfKk2/w0AUaj1w+TVNmyj8=)
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    database: 1
+    host: 210.16.122.100
+    jedis:
+      pool:
+        max-active: 100
+        max-wait: 30000ms
+        max-idle: 100
+        min-idle: 10
+    password: 1Q2W3E4Rasdf%
+    port: 6379
+    timeout: 0ms
+
+uploadFileServerPathPrefix: /Users/lihaodong/Desktop/files
