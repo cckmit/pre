@@ -404,11 +404,11 @@ public class DouyinService {
         for (DouyinDeviceIid douyinDeviceIid : douyinDeviceIids) {
             try {
                 log.info("订单号:{},锁定设备号:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getDeviceId());
-                Boolean isLockDeviceId = redisTemplate.opsForValue().setIfAbsent("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 1, TimeUnit.MINUTES);
+               /* Boolean isLockDeviceId = redisTemplate.opsForValue().setIfAbsent("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 1, TimeUnit.MINUTES);
                 if (!isLockDeviceId) {
                     log.info("订单号{}，当前设备号已经锁定:deviceId:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getDeviceId());
                     continue;
-                }
+                }*/
                 BuyRenderRoot buyRenderRoot = getAndBuildBuyRender(client, douyinAppCk, buyRenderParamDto, douyinDeviceIids.get(PreConstant.ZERO), jdMchOrder);
                 log.info("订单号:{},循环次数：{},预下单时间戳:{}", jdMchOrder.getTradeNo(), douyinDeviceIids.indexOf(douyinDeviceIid), timer.interval());
                 if (ObjectUtil.isNull(buyRenderRoot)) {
