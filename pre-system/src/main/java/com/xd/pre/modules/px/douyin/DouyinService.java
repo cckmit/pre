@@ -179,18 +179,41 @@ public class DouyinService {
         }
         Integer count = douyinAppCkMapper.selectCount(wrapper);
         int pageIndex = PreUtils.randomCommon(0, count, 1)[0];
+        List<Integer> accounts = new ArrayList<>();
         if (count > 5) {
             int[] ints = PreUtils.randomCommon(0, count, 4);
-            List<Integer> accounts = new ArrayList<>();
             for (int anInt : ints) {
                 accounts.add(anInt);
             }
             accounts = accounts.stream().sorted().collect(Collectors.toList());
             pageIndex = accounts.get(PreConstant.ZERO);
+
         }
         if (count == 0) {
             log.info("订单号:{}，没有ck，请导入ck", jdMchOrder.getTradeNo());
             return null;
+        }
+        if (storeConfig.getGroupNum() == PreConstant.EIGHT && CollUtil.isNotEmpty(accounts)) {
+            DouyinAppCk douyinAppCk = null;
+            Integer let = 2000;
+            for (Integer account : accounts) {
+                Page<DouyinAppCk> douyinAppCkPage = new Page<>(account, PreConstant.ONE);
+                douyinAppCkPage = douyinAppCkMapper.selectPage(douyinAppCkPage, wrapper);
+                DouyinAppCk douyinAppCkT = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
+                String ed = redisTemplate.opsForValue().get("抖音各个账号剩余额度:" + douyinAppCkT.getUid());
+                if (StrUtil.isNotBlank(ed) && Integer.valueOf(ed) >= storeConfig.getSkuPrice().intValue()) {
+                    if (let > Integer.valueOf(ed)) {
+                        let = Integer.valueOf(ed);
+                        douyinAppCk = douyinAppCkT;
+                    }
+                }
+            }
+            if (ObjectUtil.isNotNull(douyinAppCk)) {
+                Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音ck锁定2分钟:" + douyinAppCk.getUid(), JSON.toJSONString(douyinAppCk), 1, TimeUnit.MINUTES);
+                if (ifAbsent) {
+                    return douyinAppCk;
+                }
+            }
         }
         Page<DouyinAppCk> douyinAppCkPage = new Page<>(pageIndex, PreConstant.ONE);
         douyinAppCkPage = douyinAppCkMapper.selectPage(douyinAppCkPage, wrapper);
@@ -199,9 +222,9 @@ public class DouyinService {
         Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音ck锁定2分钟:" + douyinAppCk.getUid(), JSON.toJSONString(douyinAppCk), 1, TimeUnit.MINUTES);
         if (ifAbsent) {
             return douyinAppCk;
-        } else {
-            return null;
         }
+        return null;
+
     }
 
     public Integer getPayType() {
