@@ -593,9 +593,9 @@ public class DouyinService {
                         timer.interval(),
                         bodyRes1);
                 if (bodyRes1.contains("order_id")) {
-                    redisTemplate.opsForValue().set("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 4, TimeUnit.HOURS);
+                    redisTemplate.opsForValue().set("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 12, TimeUnit.HOURS);
                     log.info("订单号:{},当前设备号和uid绑定其他人不能使用msg:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getId());
-                    redisTemplate.opsForValue().set("抖音和设备号关联:" + douyinAppCk.getUid(), JSON.toJSONString(douyinDeviceIid), 4, TimeUnit.HOURS);
+                    redisTemplate.opsForValue().set("抖音和设备号关联:" + douyinAppCk.getUid(), JSON.toJSONString(douyinDeviceIid), 12, TimeUnit.HOURS);
                     String proxyString = client.proxy().toString().split("HTTP @ /")[1];
                     String ip = proxyString.split(":")[0];
                     String port = proxyString.split(":")[1];
