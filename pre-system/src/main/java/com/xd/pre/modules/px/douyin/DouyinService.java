@@ -449,6 +449,11 @@ public class DouyinService {
         douyinDeviceIids = douyinDeviceIidsT;
         for (DouyinDeviceIid douyinDeviceIid : douyinDeviceIids) {
             try {
+                Integer sufMeny = getSufMeny(douyinAppCk.getUid());
+                if (sufMeny - new BigDecimal(jdMchOrder.getMoney()).intValue() < 0) {
+                    synProductMaxPrirce();
+                    return null;
+                }
                 log.info("订单号:{},锁定设备号:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getDeviceId());
                /* Boolean isLockDeviceId = redisTemplate.opsForValue().setIfAbsent("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 1, TimeUnit.MINUTES);
                 if (!isLockDeviceId) {
@@ -756,8 +761,31 @@ public class DouyinService {
         }
     }
 
+    private Integer getSufMeny(String uid) {
+        LambdaQueryWrapper<JdOrderPt> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(JdOrderPt::getPtPin, uid.trim());
+        wrapper.lt(JdOrderPt::getPaySuccessTime, DateUtil.beginOfDay(new Date()));
+        Integer count = jdOrderPtMapper.selectCount(wrapper);
+        String s = redisTemplate.opsForValue().get("抖音各个账号剩余额度:" + uid);
+        if (count > 0) {
+            return Integer.valueOf(s);
+        } else {
+            log.info("查询当前账号是否有存在的订单。如果存在就返回余额0");
+            DateTime endOfDay = DateUtil.endOfDay(new Date());
+            DateTime beginOfDay = DateUtil.beginOfDay(new Date());
+            List<Map<String, Object>> mapList = jdOrderPtMapper.selectDouYinByStartTimeAndEndAndUidGroup(beginOfDay, endOfDay);
+            if (CollUtil.isNotEmpty(mapList)) {
+                Map<String, Map<String, Object>> pt_pins = mapList.stream().collect(Collectors.toMap(it -> it.get("pt_pin").toString(), it -> it));
+                Map<String, Object> stringObjectMap = pt_pins.get(uid);
+                if (CollUtil.isNotEmpty(stringObjectMap)) {
+                    return PreConstant.ZERO;
+                }
+            }
+            return 200;
+        }
+    }
 
-    @Scheduled(cron = "0/40 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     @Async("asyncPool")
     public void synProductMaxPrirce() {
         for (int i = 0; i < 4; i++) {
