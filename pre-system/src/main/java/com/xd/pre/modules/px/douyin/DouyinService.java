@@ -150,6 +150,7 @@ public class DouyinService {
         }
         log.info("订单号:{},当前库存存在支付连接", jdMchOrder.getTradeNo());
         //  .hrefUrl(payReUrl).weixinUrl(payReUrl).wxPayUrl(payReUrl)
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         jdOrderPtDb.setHrefUrl(payReUrl);
         jdOrderPtDb.setWeixinUrl(payReUrl);
         jdOrderPtDb.setWxPayUrl(payReUrl);
@@ -159,6 +160,11 @@ public class DouyinService {
         jdMchOrder.setMatchTime(l >= 1 ? l - 1 : l);
         jdMchOrder.setOriginalTradeNo(jdOrderPtDb.getOrderId());
         jdMchOrderMapper.updateById(jdMchOrder);
+        JdMchOrder jdMchOrderDb = jdMchOrderMapper.selectById(jdMchOrder.getId());
+        if (ObjectUtil.isNull(jdMchOrderDb.getOriginalTradeId())) {
+            log.info("重新匹配");
+            redisTemplate.delete("锁定抖音库存订单:" + jdOrderPtDb.getId());
+        }
         return R.ok(jdMchOrder);
     }
 
