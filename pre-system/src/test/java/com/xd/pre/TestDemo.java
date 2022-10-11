@@ -19,7 +19,7 @@ public class TestDemo {
                 stringBuilder.append(split[1] + ";");
             }
             if (line.equals("====================================")) {
-                System.out.println(stringBuilder.toString());
+//                System.out.println(stringBuilder.toString());
                 stringBuilder = new StringBuilder();
             }
         }
@@ -32,7 +32,7 @@ public class TestDemo {
                 String iid = urlEntity.getParams().get("iid");
                 stringBuilder1.append(device_id + "===" + iid);
                 String format = String.format("INSERT INTO douyin_device_iid (  device_id, iid )VALUES('%s', '%s');", device_id, iid);
-//                System.out.println(format);
+                System.out.println(format);
                 stringBuilder1 = new StringBuilder();
             }
         }

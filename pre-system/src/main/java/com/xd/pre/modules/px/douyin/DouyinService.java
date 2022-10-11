@@ -389,7 +389,7 @@ public class DouyinService {
             );
             String signUrl = getSignUrl();
             log.info("订单号{}，签证地址msg:{}", jdMchOrder.getTradeNo(), signUrl);
-            String signHt = HttpRequest.post(signUrl).body(signData).execute().body();
+            String signHt = HttpRequest.post(signUrl).body(signData).timeout(2000).execute().body();
             String x_gorgon = JSON.parseObject(signHt).getString("x-gorgon");
             String x_khronos = JSON.parseObject(signHt).getString("x-khronos");
             RequestBody body = RequestBody.create(mediaType, bodyData);
@@ -565,7 +565,7 @@ public class DouyinService {
                 );
                 String signUrl = getSignUrl();
                 log.info("订单号{}，签证地址msg:{}", jdMchOrder.getTradeNo(), signUrl);
-                String signHt1 = HttpRequest.post(signUrl).body(signData1).execute().body();
+                String signHt1 = HttpRequest.post(signUrl).body(signData1).timeout(2000).execute().body();
                 String x_gorgon1 = JSON.parseObject(signHt1).getString("x-gorgon");
                 String x_khronos1 = JSON.parseObject(signHt1).getString("x-khronos");
                 String tarceid1 = JSON.parseObject(signHt1).getString("tarceid");
@@ -650,7 +650,6 @@ public class DouyinService {
     public BuyRenderRoot getAndBuildBuyRender(OkHttpClient client, DouyinAppCk douyinAppCk, BuyRenderParamDto buyRenderParamDto,
                                               DouyinDeviceIid douyinDeviceIid, JdMchOrder jdMchOrder) {
         try {
-
             String body = SubmitUtils.buildBuyRenderParamData(buyRenderParamDto);
             if (Integer.valueOf(jdMchOrder.getPassCode()) == PreConstant.TEN) {
                 body = SubmitUtils.buildBuyRenderYongHui(buyRenderParamDto);
@@ -668,7 +667,7 @@ public class DouyinService {
                     X_SS_STUB, url
             );
             String signUrl = getSignUrl();
-            String signHt = HttpRequest.post(signUrl).body(signData).execute().body();
+            String signHt = HttpRequest.post(signUrl).body(signData).timeout(2000).execute().body();
             String x_gorgon = JSON.parseObject(signHt).getString("x-gorgon");
             String x_khronos = JSON.parseObject(signHt).getString("x-khronos");
             RequestBody requestBody = new FormBody.Builder()
