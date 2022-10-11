@@ -297,7 +297,7 @@ public class TopicConsumerListener {
     }
 
     //queue模式的消费者
-    @JmsListener(destination = "product_douyin_stock_queue", containerFactory = "queueListener", concurrency = "10")
+    @JmsListener(destination = "product_douyin_stock_queue", containerFactory = "queueListener", concurrency = "20")
     public void product_douyin_stock_queue(String message) {
         log.info("生产库存appstore");
         JdAppStoreConfig jdAppStoreConfig = JSON.parseObject(message, JdAppStoreConfig.class);
