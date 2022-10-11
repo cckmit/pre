@@ -390,8 +390,8 @@ public class ProductProxyTask {
         } else {
             redisTemplate.opsForValue().set("是否使用代理", "1");
         }
-        OkHttpClient client = builder.connectTimeout(5, TimeUnit.SECONDS).readTimeout(5, TimeUnit.SECONDS)
-                .callTimeout(5, TimeUnit.SECONDS).writeTimeout(5, TimeUnit.SECONDS)
+        OkHttpClient client = builder.connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS)
+                .callTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS)
                 .followRedirects(false).build();
         Request request = new Request.Builder()
                 .url("http://210.16.122.100")
