@@ -130,6 +130,9 @@ public class DouyinService {
             payReUrl = payByOrderId(client, payDto, jdLog, jdMchOrder);
             if (StrUtil.isNotBlank(payReUrl)) {
                 break;
+            } else {
+                client = pcAppStoreService.buildClient();
+                continue;
             }
         }
         log.info("订单号{}，获取支付链接成功:时间戳{}", jdMchOrder.getTradeNo(), timer.interval());
