@@ -24,7 +24,6 @@ public class DouYNew {
 /*        String device_id = "2538093503847412";
         String iid = "2124682890589959";*/
 
-
         Integer payType = 2;
         String payIp = "183.10.16.172";
         String ck = "d_ticket=5885f4e154d95f8aef6823818c188b940ce4a; odin_tt=c04cdb41264c44dd6eb1dc7639a6d747516f1fb2aeea2b7be1893ff3d9939d9c0be36c1663a4f29a0799cbd5c0776f25e23bc3f894b971beb4806805a819808fff734442d1e67035f477bb94296958db; odin_tt=cf2d83ef88adeba7a9b3de665f5c50394331f3653fc70aac403477200e6c8288269db83f33549727556d3f2413737e6c6a7e6552567e92dbae32b280d0b0c489e375bcca26477b90b6f52a0a6d12b97d; n_mh=w2qj_IYdWUDW92mBL9Ft-kpcYF6PZVf6NyMArTUSeUI; sid_guard=572b560f55fd52aa030623a610c08da2%7C1665384193%7C5184000%7CFri%2C+09-Dec-2022+06%3A43%3A13+GMT; uid_tt=e00a031ddf81a2d548aed55002c4c166; uid_tt_ss=e00a031ddf81a2d548aed55002c4c166; sid_tt=572b560f55fd52aa030623a610c08da2; sessionid=572b560f55fd52aa030623a610c08da2; sessionid_ss=572b560f55fd52aa030623a610c08da2; reg-store-region=; passport_csrf_token=a3586cad6d9453a232c1b33907573d99; passport_csrf_token_default=a3586cad6d9453a232c1b33907573d99; install_id=4288525850116552; ttreq=1$a4d69b1da6d4659548515a78ebd8fcf411fcce5b";
