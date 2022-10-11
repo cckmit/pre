@@ -162,8 +162,9 @@ public class DouyinService {
         jdMchOrderMapper.updateById(jdMchOrder);
         JdMchOrder jdMchOrderDb = jdMchOrderMapper.selectById(jdMchOrder.getId());
         if (ObjectUtil.isNull(jdMchOrderDb.getOriginalTradeId())) {
-            log.info("重新匹配");
+            log.info("订单号:{},重新匹配", jdMchOrderDb.getTradeNo());
             redisTemplate.delete("锁定抖音库存订单:" + jdOrderPtDb.getId());
+            return null;
         }
         return R.ok(jdMchOrder);
     }
