@@ -126,11 +126,10 @@ public class DouyinService {
         PayDto payDto = JSON.parseObject(jdOrderPtDb.getMark(), PayDto.class);
         log.info("订单号:{},有库存", jdMchOrder.getTradeNo());
         for (int i = 0; i < 3; i++) {
+            log.info("订单号：{}第{}，次循环", jdMchOrder.getTradeNo(), i);
             payReUrl = payByOrderId(client, payDto, jdLog, jdMchOrder);
             if (StrUtil.isNotBlank(payReUrl)) {
                 break;
-            } else {
-                client = pcAppStoreService.buildClient();
             }
         }
         log.info("订单号{}，获取支付链接成功:时间戳{}", jdMchOrder.getTradeNo(), timer.interval());
@@ -359,6 +358,7 @@ public class DouyinService {
         String payReUrl = "";
         log.info("订单号{}，创建订单完成:时间戳{}", jdMchOrder.getTradeNo(), timer.interval());
         for (int i = 0; i < 3; i++) {
+            log.info("订单号：{}第{}，次循环", jdMchOrder.getTradeNo(), i);
             log.info("订单号:{},第一次获取支付数据", jdMchOrder.getTradeNo());
             payReUrl = payByOrderId(client, payDto, jdLog, jdMchOrder);
             if (StrUtil.isNotBlank(payReUrl)) {
