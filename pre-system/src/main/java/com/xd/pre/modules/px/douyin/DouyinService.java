@@ -281,7 +281,7 @@ public class DouyinService {
         if (ObjectUtil.isNotNull(jdMchOrderDb)) {
             douyinDeviceIidSize = 2;
         } else {
-            douyinDeviceIidSize = 10;
+            douyinDeviceIidSize = 5;
         }
         int[] deviceRInts = PreUtils.randomCommon(0, douyinDeviceIids.size() - 1, douyinDeviceIids.size() - 1 > douyinDeviceIidSize ? douyinDeviceIidSize : douyinDeviceIids.size() - 1);
         List<DouyinDeviceIid> douyinDeviceIUseids = new ArrayList();
@@ -401,6 +401,22 @@ public class DouyinService {
     public PayDto createOrder(OkHttpClient client, BuyRenderParamDto buyRenderParamDto, Integer payType,
                               DouyinAppCk douyinAppCk, JdLog jdLog, JdMchOrder jdMchOrder, List<DouyinDeviceIid> douyinDeviceIids, TimeInterval timer, String phone) {
         PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
+//        redisTemplate.opsForValue().set("抖音和设备号关联:" + douyinAppCk.getUid(), JSON.toJSONString(douyinDeviceIid), 4, TimeUnit.HOURS);
+        String deviceBangDing = redisTemplate.opsForValue().get("抖音和设备号关联:" + douyinAppCk.getUid());
+        List<DouyinDeviceIid> douyinDeviceIidsT = new ArrayList<>();
+        if (StrUtil.isNotBlank(deviceBangDing)) {
+            DouyinDeviceIid douyinDeviceIid = JSON.parseObject(deviceBangDing, DouyinDeviceIid.class);
+            log.info("订单号：{}管理，关联设备号:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getDeviceId());
+            douyinDeviceIidsT.add(douyinDeviceIid);
+            douyinDeviceIidsT.add(douyinDeviceIid);
+            douyinDeviceIidsT.add(douyinDeviceIid);
+        }
+        for (DouyinDeviceIid douyinDeviceIid : douyinDeviceIids) {
+            douyinDeviceIidsT.add(douyinDeviceIid);
+        }
+
+        douyinDeviceIids = douyinDeviceIidsT;
+
         for (DouyinDeviceIid douyinDeviceIid : douyinDeviceIids) {
             try {
                 log.info("订单号:{},锁定设备号:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getDeviceId());
@@ -542,9 +558,9 @@ public class DouyinService {
                         timer.interval(),
                         bodyRes1);
                 if (bodyRes1.contains("order_id")) {
-                    log.debug("解锁抖音设备号");
-                    redisTemplate.delete("抖音锁定设备:" + douyinDeviceIid.getId());
-//                    HTTP @ /120.37.92.151:4224
+                    redisTemplate.opsForValue().set("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 4, TimeUnit.HOURS);
+                    log.info("订单号:{},当前设备号和uid绑定其他人不能使用msg:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getId());
+                    redisTemplate.opsForValue().set("抖音和设备号关联:" + douyinAppCk.getUid(), JSON.toJSONString(douyinDeviceIid), 4, TimeUnit.HOURS);
                     String proxyString = client.proxy().toString().split("HTTP @ /")[1];
                     String ip = proxyString.split(":")[0];
                     String port = proxyString.split(":")[1];
