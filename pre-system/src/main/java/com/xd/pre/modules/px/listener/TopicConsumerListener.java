@@ -322,7 +322,7 @@ public class TopicConsumerListener {
                     .eq(JdMchOrder::getPassCode, jdAppStoreConfig.getGroupNum()).eq(JdMchOrder::getSkuId, jdAppStoreConfig.getSkuId())
                     .gt(JdMchOrder::getCreateTime, DateUtil.offsetMinute(new Date(), -20)));
             if (jdMchOrderPage.getRecords().size() > 0) {
-                sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(jdAppStoreConfig), 30);
+                sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(jdAppStoreConfig), 10);
                 log.info("订单放入队列");
                 JdMchOrder jdMchOrder = jdMchOrderPage.getRecords().get(PreConstant.ZERO);
                 String orderId = PreUtils.getRandomString(5).toUpperCase();

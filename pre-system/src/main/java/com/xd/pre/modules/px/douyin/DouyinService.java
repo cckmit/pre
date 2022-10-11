@@ -446,9 +446,7 @@ public class DouyinService {
         for (DouyinDeviceIid douyinDeviceIid : douyinDeviceIids) {
             douyinDeviceIidsT.add(douyinDeviceIid);
         }
-
         douyinDeviceIids = douyinDeviceIidsT;
-
         for (DouyinDeviceIid douyinDeviceIid : douyinDeviceIids) {
             try {
                 log.info("订单号:{},锁定设备号:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getDeviceId());
