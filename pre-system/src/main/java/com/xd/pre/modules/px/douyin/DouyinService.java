@@ -316,9 +316,14 @@ public class DouyinService {
         List<DouyinDeviceIid> douyinDeviceIUseids = new ArrayList();
         for (int i = 0; i < deviceRInts.length; i++) {
             DouyinDeviceIid douyinDeviceIid = douyinDeviceIids.get(deviceRInts[i]);
-            if (douyinDeviceIid.getDeviceId().contains("device_id") || douyinDeviceIid.getIid().contains("install_id")) {
-                douyinDeviceIid.setDeviceId(douyinDeviceIid.getDeviceId().split("device_id=")[1]);
-                douyinDeviceIid.setIid(douyinDeviceIid.getIid().split("install_id=")[1]);
+            if (douyinDeviceIid.getDeviceId().contains("device_id=") || douyinDeviceIid.getIid().contains("install_id")
+                    || douyinDeviceIid.getDeviceId().contains("device_id_str") || douyinDeviceIid.getIid().contains("install_id_str")) {
+                if (douyinDeviceIid.getDeviceId().contains("device_id=")) {
+                    douyinDeviceIid.setDeviceId(douyinDeviceIid.getDeviceId().split("=")[1]);
+                }
+                if (douyinDeviceIid.getIid().contains("install_id")) {
+                    douyinDeviceIid.setIid(douyinDeviceIid.getIid().split("=")[1]);
+                }
                 douyinDeviceIidMapper.updateById(douyinDeviceIid);
             }
             douyinDeviceIUseids.add(douyinDeviceIid);

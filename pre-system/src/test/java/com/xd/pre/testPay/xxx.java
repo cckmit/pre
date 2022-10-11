@@ -65,7 +65,7 @@ public class xxx {
             System.out.println(StrUtil.isBlank(lineTotal.toString()) ? "执行成功" : lineTotal.toString());
         }
         for (String string : strings) {
-            if (true) {
+            if (false) {
                 return;
             }
             String m = "adb -s " + string + "  install D:\\desk\\抖音\\jinri.apk";
