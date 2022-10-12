@@ -748,6 +748,7 @@ public class DouyinService {
                 JSONObject voucher_info = voucher_info_list.get(PreConstant.ZERO);
                 String code = voucher_info.getString("code");
                 if (StrUtil.isNotBlank(code)) {
+                    PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
                     log.info("订单号{}，当前获取的卡密成功msg:{}", jdMchOrder.getTradeNo(), code);
                     jdOrderPt.setCardNumber(code);
                     jdOrderPt.setCarMy(code);
@@ -756,12 +757,12 @@ public class DouyinService {
                     jdOrderPtMapper.updateById(jdOrderPt);
                     jdMchOrder.setStatus(PreConstant.TWO);
                     jdMchOrderMapper.updateById(jdMchOrder);
-                    log.info("订单号：{}，开始计算成功金额,pin:{}", jdOrderPt.getPtPin());
-                    Integer maxPrice = douyinMaxPrice();
-                    DateTime endOfDay = DateUtil.endOfDay(new Date());
-                    DateTime beginOfDay = DateUtil.beginOfDay(new Date());
-                    Integer sku_price_total = jdOrderPtMapper.selectDouYinByStartTimeAndEndAndUid(jdOrderPt.getPtPin(), beginOfDay, endOfDay);
-                    log.info("订单号:{},当前账号:{},剩余额度:{}", jdMchOrder.getTradeNo(), jdOrderPt.getPtPin(), maxPrice - sku_price_total);
+                    log.info("订单号：{}，开始计算成功金额,pin:{}", jdMchOrder.getTradeNo());
+//                    Integer maxPrice = douyinMaxPrice();
+//                    DateTime endOfDay = DateUtil.endOfDay(new Date());
+//                    DateTime beginOfDay = DateUtil.beginOfDay(new Date());
+//                    Integer sku_price_total = jdOrderPtMapper.selectDouYinByStartTimeAndEndAndUid(jdOrderPt.getPtPin(), beginOfDay, endOfDay);
+//                    log.info("订单号:{},当前账号:{},剩余额度:{}", jdMchOrder.getTradeNo(), jdOrderPt.getPtPin(), maxPrice - sku_price_total);
                     return;
                 }
             }
@@ -791,11 +792,13 @@ public class DouyinService {
             return 200;
         }
     }
+
     @Scheduled(cron = "0/30 * * * * ?")
     @Async("asyncPool")
     public void callBack() {
 //        redisTemplate.opsForValue().setIfAbsent("回调触发器:{}");
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("asyncPool")
     public void synProductMaxPrirce() {

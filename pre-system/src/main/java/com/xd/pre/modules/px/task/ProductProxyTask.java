@@ -424,6 +424,7 @@ public class ProductProxyTask {
                 .eq(JdMchOrder::getPassCode, PreConstant.EIGHT));
         for (JdMchOrder jdMchOrder : jdMchOrders) {
             try {
+                PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
                 String data = redisTemplate.opsForValue().get("查询订单:" + jdMchOrder.getTradeNo());
                 if (StrUtil.isNotBlank(data)) {
                     return;
@@ -434,10 +435,6 @@ public class ProductProxyTask {
                     weiXinPayUrl.getCartNumAndMy(jdMchOrder);
                     JdMchOrder jdMchOrderIn = jdMchOrderMapper.selectById(jdMchOrder.getId());
                     if (jdMchOrderIn.getStatus() == 2) {
-                        notifySuccess(jdMchOrder);
-                    }
-                } else {
-                    if (jdMchOrder.getNotifySucc() != 1) {
                         notifySuccess(jdMchOrder);
                     }
                 }

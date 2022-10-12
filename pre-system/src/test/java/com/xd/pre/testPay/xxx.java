@@ -1,7 +1,5 @@
 package com.xd.pre.testPay;
 
-import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSON;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,16 +19,15 @@ public class xxx {
                 lineTotal.append(line);
             }
             String list_of_devices_attached = lineTotal.toString().replace("List of devices attached", "");
-            String[] ss = list_of_devices_attached.split("127.0.0.1:");
+            String[] ss = list_of_devices_attached.split("\tdevice");
             for (String s1 : ss) {
-                if (StrUtil.isNotBlank(s1.trim())) {
-                    String replace = s1.replace("\tdevice", "");
-                    //127.0.0.1:62025
-                    strings.add("127.0.0.1:" + replace);
-                }
+                String replace = s1.replace("\tdevice", "");
+                //127.0.0.1:62025
+                System.out.println(replace);
+                strings.add(replace);
             }
         }
-        System.out.println("当前设备号:" + JSON.toJSONString(strings));
+        System.out.println("设备号" + strings);
         for (String string : strings) {
             Process pr = rt.exec("adb -s " + string + " shell settings put global http_proxy 192.168.2.149:8866");
             String line = null;
@@ -39,17 +36,19 @@ public class xxx {
             while ((line = input.readLine()) != null) {
                 lineTotal.append(line);
             }
-            System.out.println(StrUtil.isBlank(lineTotal.toString()) ? "执行成功" : lineTotal.toString());
+            System.out.println(lineTotal.toString() == "" ? "执行成功" : lineTotal.toString());
         }
         if (true) {
-            Process pr = rt.exec("adb remount");
-            String line = null;
-            BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream(), "GBK"));
-            StringBuilder lineTotal = new StringBuilder();
-            while ((line = input.readLine()) != null) {
-                lineTotal.append(line);
+            for (String string : strings) {
+                Process pr = rt.exec("adb -s " + string + " remount");
+                String line = null;
+                BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream(), "GBK"));
+                StringBuilder lineTotal = new StringBuilder();
+                while ((line = input.readLine()) != null) {
+                    lineTotal.append(line);
+                }
+                System.out.println(lineTotal.toString() == "" ? "执行成功" : lineTotal.toString());
             }
-            System.out.println(StrUtil.isBlank(lineTotal.toString()) ? "执行成功" : lineTotal.toString());
         }
 
         for (String string : strings) {
@@ -62,10 +61,10 @@ public class xxx {
             while ((line = input.readLine()) != null) {
                 lineTotal.append(line);
             }
-            System.out.println(StrUtil.isBlank(lineTotal.toString()) ? "执行成功" : lineTotal.toString());
+            System.out.println(lineTotal.toString() == "" ? "执行成功" : lineTotal.toString());
         }
         for (String string : strings) {
-            if (true) {
+            if (false) {
                 return;
             }
             String m = "adb -s " + string + "  install D:\\desk\\抖音\\jinri.apk";
@@ -77,7 +76,23 @@ public class xxx {
             while ((line = input.readLine()) != null) {
                 lineTotal.append(line);
             }
-            System.out.println(StrUtil.isBlank(lineTotal.toString()) ? "执行成功" : lineTotal.toString());
+            System.out.println(lineTotal.toString() == null ? "执行成功" : lineTotal.toString());
+        }
+
+        for (String string : strings) {
+            if (false) {
+                return;
+            }
+            String m = "adb -s " + string + "  shell am start -n com.ss.android.article.news/com.ss.android.article.news.activity.MainActivity";
+            System.out.println(m);
+            Process pr = rt.exec(m);
+            String line = null;
+            BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream(), "GBK"));
+            StringBuilder lineTotal = new StringBuilder();
+            while ((line = input.readLine()) != null) {
+                lineTotal.append(line);
+            }
+            System.out.println(lineTotal.toString() == null ? "执行成功" : lineTotal.toString());
         }
 
     }
