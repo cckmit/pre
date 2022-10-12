@@ -161,6 +161,7 @@ public class DouyinService {
         jdMchOrder.setOriginalTradeId(jdOrderPtDb.getId());
         jdMchOrder.setMatchTime(l >= 1 ? l - 1 : l);
         jdMchOrder.setOriginalTradeNo(jdOrderPtDb.getOrderId());
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         jdMchOrderMapper.updateById(jdMchOrder);
         JdMchOrder jdMchOrderDb = jdMchOrderMapper.selectById(jdMchOrder.getId());
         if (ObjectUtil.isNull(jdMchOrderDb.getOriginalTradeId())) {
