@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -183,6 +184,13 @@ public class ProxyProductService {
     }
 
     private JdProxyIpPort getJdProxyIpPort_falseAc(Integer isUse, Integer index, Boolean isAc) {
+        String proxyNumStr = redisTemplate.opsForValue().get("代理个数");
+        Integer proxyNum = 30;
+        if (StrUtil.isBlank(proxyNumStr)) {
+            redisTemplate.opsForValue().set("代理个数", "30");
+        } else {
+            proxyNum = Integer.valueOf(proxyNum);
+        }
         try {
             if (index >= 3) {
                 return null;
@@ -194,7 +202,7 @@ public class ProxyProductService {
                 wrapper.gt(JdProxyIpPort::getExpirationTime, new Date())
                         .eq(JdProxyIpPort::getIsUse, 0);
                 Integer count = jdProxyIpPortMapper.selectCount(wrapper);
-                if (count <= 100) {
+                if (count <= 50) {
                     this.productIpAndPort2();
                     this.productIpAndPort1();
                     return getOneIp(isUse, index, isAc);
@@ -214,7 +222,7 @@ public class ProxyProductService {
                     return getOneIp(1, index, isAc);
                 }
                 List<String> ids = keys.stream().map(it -> it.split(":")[1]).collect(Collectors.toList());
-                if (ids.size() < 100) {
+                if (ids.size() < 50) {
                     return getOneIp(1, index, isAc);
                 }
                 int ra = PreUtils.randomCommon(1, ids.size() - 1, 1)[0];
