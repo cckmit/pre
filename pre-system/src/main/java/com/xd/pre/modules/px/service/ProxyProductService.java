@@ -202,7 +202,7 @@ public class ProxyProductService {
                 wrapper.gt(JdProxyIpPort::getExpirationTime, new Date())
                         .eq(JdProxyIpPort::getIsUse, 0);
                 Integer count = jdProxyIpPortMapper.selectCount(wrapper);
-                if (count <= 50) {
+                if (count <= proxyNum) {
                     this.productIpAndPort2();
                     this.productIpAndPort1();
                     return getOneIp(isUse, index, isAc);
@@ -222,7 +222,7 @@ public class ProxyProductService {
                     return getOneIp(1, index, isAc);
                 }
                 List<String> ids = keys.stream().map(it -> it.split(":")[1]).collect(Collectors.toList());
-                if (ids.size() < 50) {
+                if (ids.size() < proxyNum) {
                     return getOneIp(1, index, isAc);
                 }
                 int ra = PreUtils.randomCommon(1, ids.size() - 1, 1)[0];
