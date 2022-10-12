@@ -408,17 +408,27 @@ public class ProductProxyTask {
     }
 
 
-    /*    @Scheduled(cron = "0/20 * * * * ?")
-        @Async("asyncPool")*/
+    @Scheduled(cron = "0/20 * * * * ?")
+    @Async("asyncPool")
     public void callBack() {
-        DateTime dateTime = DateUtil.offsetSecond(new Date(), -300);
-        List<JdMchOrder> jdMchOrders = jdMchOrderMapper.selectList(Wrappers.<JdMchOrder>lambdaQuery().ge(JdMchOrder::getCreateTime, dateTime).isNotNull(JdMchOrder::getOriginalTradeNo));
+        Integer callBack = -300;
+        String callBackStr = redisTemplate.opsForValue().get("回调分钟数");
+        if (StrUtil.isBlank(callBackStr)) {
+            redisTemplate.opsForValue().set("回调分钟数", "-300");
+        } else {
+            callBack = Integer.valueOf(callBackStr);
+        }
+        DateTime dateTime = DateUtil.offsetSecond(new Date(), callBack);
+        List<JdMchOrder> jdMchOrders = jdMchOrderMapper.selectList(Wrappers.<JdMchOrder>lambdaQuery()
+                .ge(JdMchOrder::getCreateTime, dateTime).isNotNull(JdMchOrder::getOriginalTradeNo)
+                .eq(JdMchOrder::getPassCode, PreConstant.EIGHT));
         for (JdMchOrder jdMchOrder : jdMchOrders) {
             try {
                 String data = redisTemplate.opsForValue().get("查询订单:" + jdMchOrder.getTradeNo());
                 if (StrUtil.isNotBlank(data)) {
                     return;
                 }
+                log.info("订单号:{}回调订单定时任务", jdMchOrder.getTradeNo());
                 redisTemplate.opsForValue().set("查询订单:" + jdMchOrder.getTradeNo(), jdMchOrder.getTradeNo(), 10, TimeUnit.SECONDS);
                 if (jdMchOrder.getStatus() != 2) {
                     weiXinPayUrl.getCartNumAndMy(jdMchOrder);

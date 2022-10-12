@@ -791,7 +791,11 @@ public class DouyinService {
             return 200;
         }
     }
-
+    @Scheduled(cron = "0/30 * * * * ?")
+    @Async("asyncPool")
+    public void callBack() {
+//        redisTemplate.opsForValue().setIfAbsent("回调触发器:{}");
+    }
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("asyncPool")
     public void synProductMaxPrirce() {
