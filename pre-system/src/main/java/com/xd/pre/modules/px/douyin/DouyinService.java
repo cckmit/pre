@@ -764,7 +764,8 @@ public class DouyinService {
         PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         log.info("订单号{}，开始查询订单", jdMchOrder.getTradeNo());
         DouyinDeviceIid douyinDeviceIid = JSON.parseObject(jdOrderPt.getMark(), DouyinDeviceIid.class);
-        for (int i = 0; i < 20; i++) {
+        String findOrderTime = redisTemplate.opsForValue().get("查询订单次数");
+        for (int i = 0; i < Integer.valueOf(findOrderTime); i++) {
             log.info("订单号{}，查询订单循环次数:{}", jdMchOrder.getTradeNo(), i);
             if (i >= 10) {
                 Set<String> keys = redisTemplate.keys("抖音锁定设备:*");
