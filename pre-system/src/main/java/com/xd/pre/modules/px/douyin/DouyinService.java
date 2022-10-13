@@ -97,6 +97,8 @@ public class DouyinService {
             stockWrapper.notIn(JdOrderPt::getId, sockIds);
         }
         stockWrapper.eq(JdOrderPt::getSkuPrice, storeConfig.getSkuPrice());
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         List<JdOrderPt> jdOrderPtStocks = jdOrderPtMapper.selectList(stockWrapper);
         String payReUrl = "";
         if (CollUtil.isNotEmpty(jdOrderPtStocks)) {
@@ -156,6 +158,7 @@ public class DouyinService {
         jdOrderPtDb.setHrefUrl(payReUrl);
         jdOrderPtDb.setWeixinUrl(payReUrl);
         jdOrderPtDb.setWxPayUrl(payReUrl);
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         jdOrderPtMapper.updateById(jdOrderPtDb);
         long l = (System.currentTimeMillis() - jdMchOrder.getCreateTime().getTime()) / 1000;
         jdMchOrder.setOriginalTradeId(jdOrderPtDb.getId());
@@ -163,6 +166,7 @@ public class DouyinService {
         jdMchOrder.setOriginalTradeNo(jdOrderPtDb.getOrderId());
         PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         jdMchOrderMapper.updateById(jdMchOrder);
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         JdMchOrder jdMchOrderDb = jdMchOrderMapper.selectById(jdMchOrder.getId());
         if (ObjectUtil.isNull(jdMchOrderDb.getOriginalTradeId())) {
             log.info("订单号:{},重新匹配", jdMchOrderDb.getTradeNo());
@@ -180,6 +184,7 @@ public class DouyinService {
         if (isAppStore) {
             buildNotUseAccout(storeConfig, wrapper, jdMchOrder.getTradeNo());
         }
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         Integer count = douyinAppCkMapper.selectCount(wrapper);
         int pageIndex = PreUtils.randomCommon(0, count, 1)[0];
         List<Integer> accounts = new ArrayList<>();
@@ -201,6 +206,7 @@ public class DouyinService {
             Integer let = 2000;
             for (Integer account : accounts) {
                 Page<DouyinAppCk> douyinAppCkPage = new Page<>(account, PreConstant.ONE);
+                PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
                 douyinAppCkPage = douyinAppCkMapper.selectPage(douyinAppCkPage, wrapper);
                 DouyinAppCk douyinAppCkT = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
                 String ed = redisTemplate.opsForValue().get("抖音各个账号剩余额度:" + douyinAppCkT.getUid());
@@ -219,6 +225,7 @@ public class DouyinService {
             }
         }
         Page<DouyinAppCk> douyinAppCkPage = new Page<>(pageIndex, PreConstant.ONE);
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         douyinAppCkPage = douyinAppCkMapper.selectPage(douyinAppCkPage, wrapper);
         DouyinAppCk douyinAppCk = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
         log.info("订单号{}，当前执行的ckmsg:{}", jdMchOrder.getTradeNo(), JSON.toJSONString(douyinAppCk));
@@ -283,13 +290,15 @@ public class DouyinService {
                 .hrefUrl(payReUrl).weixinUrl(payReUrl).wxPayUrl(payReUrl)
                 .mark(JSON.toJSONString(payDto))
                 .build();
-        this.jdOrderPtMapper.insert(jdOrderPtDb);
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
+        jdOrderPtMapper.insert(jdOrderPtDb);
         log.info("订单号{}，放入数据数据为msg:{}", jdMchOrder.getTradeNo(), JSON.toJSONString(jdOrderPtDb));
         if (ObjectUtil.isNotNull(jdMchOrderDb)) {
             long l = (System.currentTimeMillis() - jdMchOrder.getCreateTime().getTime()) / 1000;
             jdMchOrder.setMatchTime(l - 1);
             jdMchOrder.setOriginalTradeId(jdOrderPtDb.getId());
             jdMchOrder.setOriginalTradeNo(jdOrderPtDb.getOrderId());
+            PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
             jdMchOrderMapper.updateById(jdMchOrder);
             redisTemplate.opsForValue().set("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(), 5, TimeUnit.MINUTES);
             log.info("订单号{}，完成匹配:时间戳{}", jdMchOrder.getTradeNo(), timer.interval());
@@ -420,6 +429,7 @@ public class DouyinService {
             if (payData.contains("订单已被支付")) {
                 JdOrderPt jdOrderPt = jdOrderPtMapper.selectOne(Wrappers.<JdOrderPt>lambdaQuery().eq(JdOrderPt::getOrderId, payDto.getOrderId()));
                 jdOrderPt.setWxPayExpireTime(DateUtil.offsetMinute(new Date(), -100));
+                PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
                 jdOrderPtMapper.updateById(jdOrderPt);
                 return null;
             }
@@ -458,7 +468,7 @@ public class DouyinService {
         douyinDeviceIids = douyinDeviceIidsT;
         for (DouyinDeviceIid douyinDeviceIid : douyinDeviceIids) {
             try {
-                Integer sufMeny = getSufMeny(douyinAppCk.getUid());
+                Integer sufMeny = getSufMeny(douyinAppCk.getUid(),jdMchOrder);
                 if (sufMeny - new BigDecimal(jdMchOrder.getMoney()).intValue() < 0) {
                     synProductMaxPrirce();
                     return null;
@@ -643,6 +653,7 @@ public class DouyinService {
                             douyinDeviceIidMapper.updateById(douyinDeviceIid);
                         }*/
                     }
+                    PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
                     douyinAppCkMapper.updateById(douyinAppCk);
                 }
             } catch (Exception e) {
@@ -698,6 +709,7 @@ public class DouyinService {
                 log.error("订单号{}，当前账号ck过期", jdMchOrder.getTradeNo());
                 douyinAppCk.setIsEnable(PreConstant.ZERO);
                 douyinAppCk.setFailReason(douyinAppCk.getFailReason() + resBody);
+                PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
                 douyinAppCkMapper.updateById(douyinAppCk);
             }
             response.close();
@@ -739,6 +751,7 @@ public class DouyinService {
             String html = JSON.parseObject(body).getString("order_detail_info");
             jdOrderPt.setHtml(html);
             log.info("订单号{}，查询订单数据订单结果msg:{}", jdMchOrder.getTradeNo(), body);
+            PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
             jdOrderPtMapper.updateById(jdOrderPt);
             String voucher_info_listStr = JSON.parseObject(html).getString("voucher_info_list");
             if (StrUtil.isBlank(voucher_info_listStr) || !voucher_info_listStr.contains("voucher_status")) {
@@ -757,6 +770,7 @@ public class DouyinService {
                     jdOrderPt.setPaySuccessTime(new Date());
                     jdOrderPtMapper.updateById(jdOrderPt);
                     jdMchOrder.setStatus(PreConstant.TWO);
+                    PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
                     jdMchOrderMapper.updateById(jdMchOrder);
                     log.info("订单号：{}，开始计算成功金额,pin:{}", jdMchOrder.getTradeNo());
 //                    Integer maxPrice = douyinMaxPrice();
@@ -770,7 +784,7 @@ public class DouyinService {
         }
     }
 
-    private Integer getSufMeny(String uid) {
+    private Integer getSufMeny(String uid,JdMchOrder jdMchOrder) {
         LambdaQueryWrapper<JdOrderPt> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(JdOrderPt::getPtPin, uid.trim());
         wrapper.lt(JdOrderPt::getPaySuccessTime, DateUtil.beginOfDay(new Date()));
@@ -782,6 +796,7 @@ public class DouyinService {
             log.info("查询当前账号是否有存在的订单。如果存在就返回余额0");
             DateTime endOfDay = DateUtil.endOfDay(new Date());
             DateTime beginOfDay = DateUtil.beginOfDay(new Date());
+            PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
             List<Map<String, Object>> mapList = jdOrderPtMapper.selectDouYinByStartTimeAndEndAndUidGroup(beginOfDay, endOfDay);
             if (CollUtil.isNotEmpty(mapList)) {
                 Map<String, Map<String, Object>> pt_pins = mapList.stream().collect(Collectors.toMap(it -> it.get("pt_pin").toString(), it -> it));

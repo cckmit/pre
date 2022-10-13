@@ -10,7 +10,7 @@ import okhttp3.*;
 @Slf4j
 public class TestPay {
     public static void main(String[] args) throws Exception {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 1; i < 2; i++) {
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType,
