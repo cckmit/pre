@@ -740,6 +740,7 @@ public class DouyinService {
         log.info("订单号{}，开始查询订单", jdMchOrder.getTradeNo());
         DouyinDeviceIid douyinDeviceIid = JSON.parseObject(jdOrderPt.getMark(), DouyinDeviceIid.class);
         for (int i = 0; i < 5; i++) {
+            log.info("订单号查询订单循环次数:{}", i);
             if (i >= 2) {
                 Set<String> keys = redisTemplate.keys("抖音锁定设备:*");
                 List<String> ids = keys.stream().map(it -> it.replace("抖音锁定设备:", "")).collect(Collectors.toList());
@@ -786,6 +787,7 @@ public class DouyinService {
                     return;
                 }
             }
+            return;
         }
     }
 
