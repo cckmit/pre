@@ -468,7 +468,7 @@ public class DouyinService {
         douyinDeviceIids = douyinDeviceIidsT;
         for (DouyinDeviceIid douyinDeviceIid : douyinDeviceIids) {
             try {
-                Integer sufMeny = getSufMeny(douyinAppCk.getUid(),jdMchOrder);
+                Integer sufMeny = getSufMeny(douyinAppCk.getUid(), jdMchOrder);
                 if (sufMeny - new BigDecimal(jdMchOrder.getMoney()).intValue() < 0) {
                     synProductMaxPrirce();
                     return null;
@@ -740,12 +740,17 @@ public class DouyinService {
         log.info("订单号{}，开始查询订单", jdMchOrder.getTradeNo());
         DouyinDeviceIid douyinDeviceIid = JSON.parseObject(jdOrderPt.getMark(), DouyinDeviceIid.class);
         for (int i = 0; i < 5; i++) {
+            if (i >= 2) {
+                Set<String> keys = redisTemplate.keys("抖音锁定设备:*");
+                List<String> ids = keys.stream().map(it -> it.replace("抖音锁定设备:", "")).collect(Collectors.toList());
+                douyinDeviceIid = douyinDeviceIidMapper.selectById(Integer.valueOf(ids.get(PreUtils.randomCommon(0, ids.size() - 1, 1)[0])));
+            }
             String url = String.format("https://aweme.snssdk.com/aweme/v1/commerce/order/detailInfo/?" +
                             "device_id=%s&aid=1128&order_id=%s&app_name=aweme&channel=dy_tiny_juyouliang_dy_and24&iid=%s",
                     douyinDeviceIid.getDeviceId(), jdOrderPt.getOrderId(), douyinDeviceIid.getIid());
             String body = HttpRequest.get(url).header("cookie", jdOrderPt.getCurrentCk()).execute().body();
             if (StrUtil.isBlank(body)) {
-                log.warn("订单号{}，查询订单结果msg:{}", body);
+                log.warn("订单号{}，查询订单结果为空。。。。。。。XXXXXXXXXXXXXXX", body);
                 continue;
             }
             String html = JSON.parseObject(body).getString("order_detail_info");
@@ -784,7 +789,7 @@ public class DouyinService {
         }
     }
 
-    private Integer getSufMeny(String uid,JdMchOrder jdMchOrder) {
+    private Integer getSufMeny(String uid, JdMchOrder jdMchOrder) {
         LambdaQueryWrapper<JdOrderPt> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(JdOrderPt::getPtPin, uid.trim());
         wrapper.lt(JdOrderPt::getPaySuccessTime, DateUtil.beginOfDay(new Date()));
