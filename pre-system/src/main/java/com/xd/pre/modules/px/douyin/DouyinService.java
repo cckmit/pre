@@ -774,8 +774,11 @@ public class DouyinService {
                 log.info("订单号{}，查询订单结果为空。。。。。。。XXXXXXXXXXXXXXX", jdMchOrder.getTradeNo(), body);
                 continue;
             }
+            String findOrderData = DateUtil.formatDateTime(new Date());
+            log.info("订单号：{}，查询成功时间:{}", jdMchOrder.getTradeNo(), findOrderData);
             String html = JSON.parseObject(body).getString("order_detail_info");
             jdOrderPt.setHtml(html);
+            jdOrderPt.setOrgAppCk(findOrderData);
             PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
             jdOrderPtMapper.updateById(jdOrderPt);
             String voucher_info_listStr = JSON.parseObject(html).getString("voucher_info_list");
