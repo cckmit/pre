@@ -750,13 +750,13 @@ public class DouyinService {
                             "device_id=%s&aid=1128&order_id=%s&app_name=aweme&channel=dy_tiny_juyouliang_dy_and24&iid=%s",
                     douyinDeviceIid.getDeviceId(), jdOrderPt.getOrderId(), douyinDeviceIid.getIid());
             String body = HttpRequest.get(url).header("cookie", jdOrderPt.getCurrentCk()).execute().body();
+            log.info("订单号{}，查询订单数据订单结果msg:{}", jdMchOrder.getTradeNo(), body);
             if (StrUtil.isBlank(body)) {
                 log.warn("订单号{}，查询订单结果为空。。。。。。。XXXXXXXXXXXXXXX", body);
                 continue;
             }
             String html = JSON.parseObject(body).getString("order_detail_info");
             jdOrderPt.setHtml(html);
-            log.info("订单号{}，查询订单数据订单结果msg:{}", jdMchOrder.getTradeNo(), body);
             PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
             jdOrderPtMapper.updateById(jdOrderPt);
             String voucher_info_listStr = JSON.parseObject(html).getString("voucher_info_list");
