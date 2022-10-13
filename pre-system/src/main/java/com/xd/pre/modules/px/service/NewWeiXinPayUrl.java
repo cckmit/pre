@@ -766,6 +766,9 @@ public class NewWeiXinPayUrl {
                 String orderIdDb = PreUtils.parseUrl(payLocalUrl).getParams().get("orderId");
                 log.info("订单号:{},抖音查询订单msg,校验是否是当前订单,payUrl:{}", jdMchOrder.getTradeNo(), payLocalUrl);
                 if (jdMchOrder.getTradeNo().equals(orderIdDb)) {
+                    if (jdMchOrder.getStatus() == PreConstant.TWO) {
+                        return null;
+                    }
                     log.info("订单号:{}，是当前订单准查询订单", orderIdDb);
                     douyinService.selectOrderStataus(jdOrderPt, jdMchOrder);
                 } else {
