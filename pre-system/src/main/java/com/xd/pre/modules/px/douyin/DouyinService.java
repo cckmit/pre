@@ -442,6 +442,13 @@ public class DouyinService {
             String payUrl = JSON.parseObject(JSON.parseObject(JSON.parseObject(JSON.parseObject(payData).getString("data")).getString("data"))
                     .getString("sdk_info")).getString("url");
             redisTemplate.opsForValue().set("阿里支付数据:" + jdMchOrder.getTradeNo(), payUrl, 3, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set("阿里支付数据:" + jdMchOrder.getTradeNo(), payUrl, 3, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set("阿里支付数据:" + jdMchOrder.getTradeNo(), payUrl, 3, TimeUnit.MINUTES);
+            log.info("订单号:{}设置阿里支付数据成功", jdMchOrder.getTradeNo());
+            String param = redisTemplate.opsForValue().get("阿里支付数据:" + jdMchOrder.getTradeNo().trim());
+            if (StrUtil.isNotBlank(param)) {
+                log.info("订单号:{},查询成功设置阿里支付数据成功,查询成功", jdMchOrder.getTradeNo());
+            }
             response.close();
             //alipays://platformapi/startapp?appId=20000067&url=http%3A%2F%2F134.122.134.69%3A8082%2Frecharge%2Fzfb%3Forder_id%3DSP2210012316069040391319127864
             String payReUrl = String.format("alipays://platformapi/startapp?appId=20000067&url=%s",
