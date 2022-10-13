@@ -778,7 +778,7 @@ public class DouyinService {
             }
             String url = String.format("https://aweme.snssdk.com/aweme/v1/commerce/order/detailInfo/?" +
                             "aid=%s&order_id=%s",
-                    PreUtils.randomCommon(100, 1000000, 1)[0]+"", jdOrderPt.getOrderId());
+                    PreUtils.randomCommon(100, 1000000, 1)[0] + "", jdOrderPt.getOrderId());
             Request request = new Request.Builder()
                     .url(url)
                     .addHeader("Cookie", jdOrderPt.getCurrentCk())
