@@ -748,10 +748,14 @@ public class DouyinService {
 
 
     public void selectOrderStataus(JdOrderPt jdOrderPt, JdMchOrder jdMchOrder) {
-        //TODO 放开这个设置。如果前端改了的话
         String isfindOrderStatus = redisTemplate.opsForValue().get("是否查询阿里支付数据:" + jdMchOrder.getTradeNo().trim());
         if (StrUtil.isBlank(isfindOrderStatus)) {
             log.info("订单号:{}没有访问数据。不需要查询", jdMchOrder.getTradeNo());
+            return;
+        }
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("当前查询订单:" + jdMchOrder.getTradeNo(), JSON.toJSONString(jdOrderPt), 1, TimeUnit.MINUTES);
+        if (!ifAbsent) {
+            log.info("当前订单,{},已经被锁定。请骚后查询", jdMchOrder.getTradeNo());
             return;
         }
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
