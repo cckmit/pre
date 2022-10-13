@@ -777,8 +777,8 @@ public class DouyinService {
                 douyinDeviceIid = douyinDeviceIidMapper.selectById(Integer.valueOf(ids.get(PreUtils.randomCommon(0, ids.size() - 1, 1)[0])));
             }
             String url = String.format("https://aweme.snssdk.com/aweme/v1/commerce/order/detailInfo/?" +
-                            "device_id=%s&aid=1128&order_id=%s&app_name=aweme&channel=dy_tiny_juyouliang_dy_and24&iid=%s",
-                    douyinDeviceIid.getDeviceId(), jdOrderPt.getOrderId(), douyinDeviceIid.getIid());
+                            "aid=%s&order_id=%s",
+                    PreUtils.randomCommon(100, 1000000, 1)[0]+"", jdOrderPt.getOrderId());
             Request request = new Request.Builder()
                     .url(url)
                     .addHeader("Cookie", jdOrderPt.getCurrentCk())

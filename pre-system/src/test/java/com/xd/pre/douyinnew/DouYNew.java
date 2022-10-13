@@ -53,6 +53,19 @@ public class DouYNew {
         String body = SubmitUtils.buildBuyRenderParamData(buyRenderParamDto);
         Map<String, String> ipAndPort = Douyin3.getIpAndPort();
         OkHttpClient client = Demo.getOkHttpClient(ipAndPort.get("ip"), Integer.valueOf(ipAndPort.get("port")));
+        Request request5 = new Request.Builder()
+                .url("https://aweme.snssdk.com/aweme/v1/commerce/order/detailInfo/?aid=14&order_id=4988996829504873954")
+                .get()
+                .addHeader("Cookie", "d_ticket=e1a1f1b599ab8b868e6449c139809db36f394;odin_tt=02de049fc983e4092274dc1f2bd1fe8257517e6389eae7de0a442b439d4890e81c47a4379c63e3567ad4bc173eabc68ec7ec030cf01c38b45a24ff153a88521d68bdc520a6a4c2e20ce23e0dec3a1f3e;odin_tt=202a76136c97a55cb6184038252cc250cda1da426459d6b6fa59088d6c843b2160dc607f579320057955d9ef89989e69581a2d7f6b2d1852a67651d773f30efc24ed9201acff840882d20081cbf0c2a4;n_mh=SAXMWJr3aCHbvWm6l2ZxjJ2SCxdmDeLy1SUNmBxqMpk;sid_guard=e3670aded3748e6e327ef5061c101ebd%7C1665384202%7C5184000%7CFri%2C+09-Dec-2022+06%3A43%3A22+GMT;uid_tt=c54e1d116cad214d40fb493c5ac94d84;uid_tt_ss=c54e1d116cad214d40fb493c5ac94d84;sid_tt=e3670aded3748e6e327ef5061c101ebd;sessionid=e3670aded3748e6e327ef5061c101ebd;sessionid_ss=e3670aded3748e6e327ef5061c101ebd;reg-store-region=;")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+        Response response5 = client.newCall(request5).execute();
+        System.out.println("-----------"+response5.body().string()+"------------");
+
+
+
+
 //        String body = "{\"address\":null,\"platform_coupon_id\":null,\"kol_coupon_id\":null,\"auto_select_best_coupons\":true,\"customize_pay_type\":\"{\\\"checkout_id\\\":1,\\\"bio_type\\\":\\\"1\\\"}\",\"first_enter\":true,\"source_type\":\"1\",\"shape\":0,\"marketing_channel\":\"\",\"forbid_redpack\":false,\"support_redpack\":true,\"use_marketing_combo\":false,\"entrance_params\":\"{\\\"order_status\\\":3,\\\"previous_page\\\":\\\"order_list_page\\\",\\\"carrier_source\\\":\\\"order_detail\\\",\\\"ecom_scene_id\\\":\\\"1041\\\",\\\"room_id\\\":\\\"\\\",\\\"promotion_id\\\":\\\"\\\",\\\"author_id\\\":\\\"\\\",\\\"group_id\\\":\\\"\\\",\\\"anchor_id\\\":\\\"4051040200033531\\\",\\\"source_method\\\":\\\"open_url\\\",\\\"ecom_group_type\\\":\\\"video\\\",\\\"discount_type\\\":\\\"\\\",\\\"full_return\\\":\\\"0\\\",\\\"is_exist_size_tab\\\":\\\"0\\\",\\\"rank_id_source\\\":\\\"\\\",\\\"show_rank\\\":\\\"not_in_rank\\\",\\\"warm_up_status\\\":\\\"0\\\",\\\"coupon_id\\\":\\\"\\\",\\\"brand_verified\\\":\\\"0\\\",\\\"label_name\\\":\\\"\\\",\\\"with_sku\\\":\\\"0\\\",\\\"is_replay\\\":\\\"0\\\",\\\"is_package_sale\\\":\\\"0\\\",\\\"is_groupbuying\\\":\\\"0\\\"}\",\"shop_requests\":[{\"shop_id\":\"GceCTPIk\",\"product_requests\":[{\"product_id\":\"3556357046087622442\",\"sku_id\":\"1736502463777799\",\"sku_num\":1,\"author_id\":\"4051040200033531\",\"ecom_scene_id\":\"1041\",\"origin_id\":\"4051040200033531_3556357046087622442\",\"origin_type\":\"3002070010\",\"new_source_type\":\"product_detail\",\"select_privilege_properties\":[]}]}]}";
         String url = "https://ken.snssdk.com/order/buyRender?b_type_new=2&request_tag_from=lynx&os_api=22&device_type=SM-G973N&ssmix=a&manifest_version_code=170301&dpi=240&is_guest_mode=0&uuid=354730528934825&app_name=news_article&version_name=17.3.0&ts=1664384063&cpu_support64=false&app_type=normal&appTheme=dark&ac=wifi&host_abi=arm64-v8a&update_version_code=17309900&channel=dy_tiny_juyouliang_dy_and24&_rticket=1664384064117&device_platform=android&iid=" + iid + "&version_code=170300&cdid=481a445f-aeb7-4365-b0cd-4d82727bb775&os=android&is_android_pad=0&openudid=199d79fbbeff0e58&device_id=" + device_id + "&resolution=720%2A1280&os_version=5.1.1&language=zh&device_brand=samsung&aid=1128&minor_status=0&mcc_mnc=46007";
         String X_SS_STUB = SecureUtil.md5("json_form=" + URLEncoder.encode(body)).toUpperCase();
@@ -78,7 +91,7 @@ public class DouYNew {
         String resBody = response.body().string();
         log.info("预下单数据msg:{}", resBody);
         response.close();
-        if (false) {
+        if (true) {
             //TODO 不让下单
             return;
         }
