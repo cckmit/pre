@@ -141,7 +141,7 @@ public class DouyinService {
         if (StrUtil.isBlank(payReUrl)) {
             return null;
         }
-        Boolean ifLockStock = redisTemplate.opsForValue().setIfAbsent("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(), 5, TimeUnit.MINUTES);
+        Boolean ifLockStock = redisTemplate.opsForValue().setIfAbsent("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(), 6, TimeUnit.MINUTES);
         if (!ifLockStock) {
             log.error("订单号{}，有人已经使用库存,请查看数据库msg:{}", jdMchOrder.getTradeNo(), jdMchOrder.getTradeNo());
             return null;
@@ -168,9 +168,14 @@ public class DouyinService {
         jdMchOrderMapper.updateById(jdMchOrder);
         PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         JdMchOrder jdMchOrderDb = jdMchOrderMapper.selectById(jdMchOrder.getId());
-        if (ObjectUtil.isNull(jdMchOrderDb.getOriginalTradeId())) {
+        JdOrderPt jdOrderPt = jdOrderPtMapper.selectById(jdOrderPtDb.getId());
+        if (ObjectUtil.isNull(jdMchOrderDb.getOriginalTradeId()) || !jdOrderPt.getHrefUrl().contains(jdMchOrderDb.getTradeNo())) {
             log.info("订单号:{},重新匹配", jdMchOrderDb.getTradeNo());
             redisTemplate.delete("锁定抖音库存订单:" + jdOrderPtDb.getId());
+            jdMchOrder.setMatchTime(-5L);
+            jdMchOrder.setOriginalTradeNo("-1");
+            jdMchOrder.setOriginalTradeId(-1);
+            jdMchOrderMapper.updateById(jdMchOrder);
             return null;
         }
         return R.ok(jdMchOrder);
@@ -300,7 +305,7 @@ public class DouyinService {
             jdMchOrder.setOriginalTradeNo(jdOrderPtDb.getOrderId());
             PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
             jdMchOrderMapper.updateById(jdMchOrder);
-            redisTemplate.opsForValue().set("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(), 5, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(), 6, TimeUnit.MINUTES);
             log.info("订单号{}，完成匹配:时间戳{}", jdMchOrder.getTradeNo(), timer.interval());
             return R.ok(jdOrderPtDb);
         } else {
@@ -436,7 +441,7 @@ public class DouyinService {
             log.info("订单号{}，支付消息返回数据msg:{}", jdMchOrder.getTradeNo(), payData);
             String payUrl = JSON.parseObject(JSON.parseObject(JSON.parseObject(JSON.parseObject(payData).getString("data")).getString("data"))
                     .getString("sdk_info")).getString("url");
-            redisTemplate.opsForValue().set("阿里支付数据:" + jdMchOrder.getTradeNo(), payUrl, 5, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set("阿里支付数据:" + jdMchOrder.getTradeNo(), payUrl, 3, TimeUnit.MINUTES);
             response.close();
             //alipays://platformapi/startapp?appId=20000067&url=http%3A%2F%2F134.122.134.69%3A8082%2Frecharge%2Fzfb%3Forder_id%3DSP2210012316069040391319127864
             String payReUrl = String.format("alipays://platformapi/startapp?appId=20000067&url=%s",
