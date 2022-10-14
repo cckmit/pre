@@ -359,7 +359,6 @@ public class DouyinService {
             wrapper.notIn(DouyinAppCk::getUid, locksData);
         }
         log.info("新用户只能下一单");
-
         if (CollUtil.isNotEmpty(edus)) {
             List<String> noUseData = new ArrayList<>();
             for (String edu : edus) {
@@ -790,7 +789,7 @@ public class DouyinService {
                 body = response.body().string();
                 response.close();
             } catch (Exception e) {
-                log.error("{},订单号查询错误", jdMchOrder.getTradeNo());
+                log.info("订单号{},订单号查询订单详情错误错误-----", jdMchOrder.getTradeNo());
             }
 //            String body = HttpRequest.get(url).header("cookie", jdOrderPt.getCurrentCk()).execute().body();
             log.info("订单号{}，查询订单数据订单结果msg:{}", jdMchOrder.getTradeNo(), body);
