@@ -182,6 +182,7 @@ public class DouyinService {
     }
 
     public DouyinAppCk randomDouyinAppCk(JdMchOrder jdMchOrder, JdAppStoreConfig storeConfig, Boolean isAppStore) {
+        Integer lockDouYinCkTime = Integer.valueOf(redisTemplate.opsForValue().get("抖音ck锁定分钟数"));
         PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         log.info("订单号{},开始查询可以使用的抖音账号msg:{}", jdMchOrder.getTradeNo());
         LambdaQueryWrapper<DouyinAppCk> wrapper = Wrappers.<DouyinAppCk>lambdaQuery().eq(DouyinAppCk::getIsEnable, PreConstant.ONE);
@@ -223,20 +224,21 @@ public class DouyinService {
                 }
             }
             if (ObjectUtil.isNotNull(douyinAppCk)) {
-                Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音ck锁定2分钟:" + douyinAppCk.getUid(), JSON.toJSONString(douyinAppCk), 1, TimeUnit.MINUTES);
+                Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音ck锁定3分钟:" + douyinAppCk.getUid(), JSON.toJSONString(douyinAppCk), lockDouYinCkTime, TimeUnit.MINUTES);
                 if (ifAbsent) {
                     return douyinAppCk;
                 }
             }
-        }
-        Page<DouyinAppCk> douyinAppCkPage = new Page<>(pageIndex, PreConstant.ONE);
-        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
-        douyinAppCkPage = douyinAppCkMapper.selectPage(douyinAppCkPage, wrapper);
-        DouyinAppCk douyinAppCk = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
-        log.info("订单号{}，当前执行的ckmsg:{}", jdMchOrder.getTradeNo(), JSON.toJSONString(douyinAppCk));
-        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音ck锁定2分钟:" + douyinAppCk.getUid(), JSON.toJSONString(douyinAppCk), 1, TimeUnit.MINUTES);
-        if (ifAbsent) {
-            return douyinAppCk;
+        } else {
+            Page<DouyinAppCk> douyinAppCkPage = new Page<>(pageIndex, PreConstant.ONE);
+            PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
+            douyinAppCkPage = douyinAppCkMapper.selectPage(douyinAppCkPage, wrapper);
+            DouyinAppCk douyinAppCk = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
+            log.info("订单号{}，当前执行的ckmsg:{}", jdMchOrder.getTradeNo(), JSON.toJSONString(douyinAppCk));
+            Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音ck锁定3分钟:" + douyinAppCk.getUid(), JSON.toJSONString(douyinAppCk), lockDouYinCkTime, TimeUnit.MINUTES);
+            if (ifAbsent) {
+                return douyinAppCk;
+            }
         }
         return null;
 
@@ -351,9 +353,9 @@ public class DouyinService {
 
     private void buildNotUseAccout(JdAppStoreConfig storeConfig, LambdaQueryWrapper<DouyinAppCk> wrapper, String no) {
         Set<String> edus = redisTemplate.keys("抖音各个账号剩余额度:*");
-        Set<String> locks = redisTemplate.keys("抖音ck锁定2分钟:*");
+        Set<String> locks = redisTemplate.keys("抖音ck锁定3分钟:*");
         if (CollUtil.isNotEmpty(locks)) {
-            List<String> locksData = locks.stream().map(it -> it.replace("抖音ck锁定2分钟:", "")).collect(Collectors.toList());
+            List<String> locksData = locks.stream().map(it -> it.replace("抖音ck锁定3分钟:", "")).collect(Collectors.toList());
             wrapper.notIn(DouyinAppCk::getUid, locksData);
         }
         log.info("新用户只能下一单");
@@ -658,12 +660,11 @@ public class DouyinService {
                         douyinDeviceIid.setFail(douyinDeviceIid.getFail() + 1);
 //                        douyinAppCk.setFailReason(douyinAppCk.getFailReason() + "过多的设备号" + JSON.toJSONString(douyinDeviceIid));
                         douyinDeviceIidMapper.updateById(douyinDeviceIid);
-                        //TODO 设备号
-                      /*  if (douyinDeviceIid.getFail() > 10 && ObjectUtil.isNotNull(douyinDeviceIid.getLastSuccessTime())) {
+                        if (douyinDeviceIid.getFail() > 10 && ObjectUtil.isNotNull(douyinDeviceIid.getLastSuccessTime())) {
                             log.info("订单号:{}设置当前设备号不用了deviceId:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getDeviceId());
                             douyinDeviceIid.setIsEnable(PreConstant.TWO);
                             douyinDeviceIidMapper.updateById(douyinDeviceIid);
-                        }*/
+                        }
                     }
                     PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
                     douyinAppCkMapper.updateById(douyinAppCk);

@@ -16,14 +16,14 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 @Slf4j
-public class DouYNew {
+public class DouYNewT {
     public static void main(String[] args) throws Exception {
 /*        String device_id = "4218157521440552";
         String iid = "523798452383079";*/
 /*        String device_id = "471022820408952";
         String iid = "3039481983934968";*/
-        String device_id = "1614514918028910";
-        String iid = "770089988142839";
+        String device_id = "3672800685480557";
+        String iid = "488615012220702";
 
 
 
@@ -100,7 +100,7 @@ public class DouYNew {
             return;
         }
         BuyRenderRoot buyRenderRoot = JSON.parseObject(JSON.parseObject(resBody).getString("data"), BuyRenderRoot.class);
-        String url1 = "https://ec.snssdk.com/order/newcreate/vtl?can_queue=1&b_type_new=2&request_tag_from=lynx&os_api=5&device_type=ELE-AL00&ssmix=a&manifest_version_code=170301&dpi=240&is_guest_mode=0&uuid=354730528931234&app_name=aweme&version_name=17.3.0&ts=1664384138&cpu_support64=false&app_type=normal&appTheme=dark&ac=wifi&host_abi=armeabi-v7a&update_version_code=17309900&channel=dy_tiny_juyouliang_dy_and24&device_platform=android&iid=" + iid + "&version_code=170300&cdid=481a445f-aeb7-4365-b0cd-4d82727bb775&os=android&is_android_pad=0&openudid=199d79fbbeff0x58&device_id=" + device_id + "&resolution=720*1280&os_version=7.1.1&language=zh&device_brand=samsung&aid=1128&minor_status=0&mcc_mnc=46007";
+        String url1 = "https://ec5-core-lq.ecombdapi.com/order/newcreate/vtl?can_queue=1&b_type_new=2&sub_b_type=3&live_request_from_jsb=1&live_sdk_version=220401&webcast_sdk_version=2650&webcast_language=zh&webcast_locale=zh_CN&webcast_gps_access=1&current_network_quality_info=%7B%22http_rtt%22%3A214%2C%22tcp_rtt%22%3A119%2C%22quic_rtt%22%3A119%2C%22downstream_throughput_kbps%22%3A891%2C%22net_effective_connection_type%22%3A4%2C%22video_download_speed%22%3A187%2C%22quic_receive_loss_rate%22%3A-1%2C%22quic_send_loss_rate%22%3A-1%7D&address_book_access=2&user_id=68624060367&is_pad=false&is_android_pad=0&is_landscape=false&carrier_region=CN&sec_user_id=MS4wLjABAAAA8bta1JiE-eD-YxgijSTIRDo47OOuYQ_uXFG3UMTqkjs&iid="+iid+"&device_id="+device_id+"&ac=wifi&channel=shenmasem_ls_dy_031&aid=1128&app_name=aweme&version_code=220400&version_name=22.4.0&device_platform=android&os=android&ssmix=a&device_type=Redmi+8A&device_brand=Xiaomi&language=zh&os_api=28&os_version=9&manifest_version_code=220401&resolution=720*1369&dpi=320&update_version_code=22409900&_rticket=1665718169618&package=com.ss.android.ugc.aweme&mcc_mnc=46011&cpu_support64=false&host_abi=armeabi-v7a&is_guest_mode=0&app_type=normal&minor_status=0&appTheme=light&need_personal_recommend=1&ts=1665718169&cdid=40c38bf3-f9c3-474d-b0d6-9c04da89dab5&md=0";
         String bodyData1 = String.format("{\"area_type\":\"169\",\"receive_type\":1,\"travel_info\":{\"departure_time\":0,\"trave_type\":1,\"trave_no\":\"\"}," +
                         "\"pickup_station\":\"\",\"traveller_degrade\":\"\",\"b_type\":3,\"env_type\":\"2\",\"activity_id\":\"\"," +
                         "\"origin_type\":\"%s\"," +
