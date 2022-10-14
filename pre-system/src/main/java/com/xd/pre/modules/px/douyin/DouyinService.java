@@ -330,7 +330,7 @@ public class DouyinService {
         if (ObjectUtil.isNotNull(jdMchOrderDb)) {
             douyinDeviceIidSize = 2;
         } else {
-            douyinDeviceIidSize = 5;
+            douyinDeviceIidSize = 10;
         }
         int[] deviceRInts = PreUtils.randomCommon(0, douyinDeviceIids.size() - 1, douyinDeviceIids.size() - 1 > douyinDeviceIidSize ? douyinDeviceIidSize : douyinDeviceIids.size() - 1);
         List<DouyinDeviceIid> douyinDeviceIUseids = new ArrayList();
@@ -717,7 +717,7 @@ public class DouyinService {
             Response response = client.newCall(request).execute();
             String resBody = response.body().string();
             log.info("订单号{}，预下单数据msg:{}", jdMchOrder.getTradeNo(), resBody);
-            if (StrUtil.isNotBlank(resBody) && resBody.contains("获取登录信息失败")) {
+            if (StrUtil.isNotBlank(resBody) && resBody.contains("失败")) {
                 log.error("订单号{}，当前账号ck过期", jdMchOrder.getTradeNo());
                 douyinAppCk.setIsEnable(PreConstant.ZERO);
                 douyinAppCk.setFailReason(douyinAppCk.getFailReason() + resBody);
