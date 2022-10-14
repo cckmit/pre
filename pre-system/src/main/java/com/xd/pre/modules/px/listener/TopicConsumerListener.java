@@ -323,6 +323,11 @@ public class TopicConsumerListener {
                     .gt(JdMchOrder::getCreateTime, DateUtil.offsetMinute(new Date(), -20)));
             if (jdMchOrderPage.getRecords().size() > 0) {
                 int sufStoke = jdAppStoreConfig.getProductStockNum() - jdOrderPtStocks.size();
+                Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音生产订单刚刚放入最大小号数", "1", 10, TimeUnit.SECONDS);
+                if (!ifAbsent) {
+                    log.info("刚刚放入。不需要再放");
+                    return;
+                }
                 for (int i = 0; i < sufStoke; i++) {
                     sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(jdAppStoreConfig), PreUtils.randomCommon(1, 20, 1)[0]);
                 }
