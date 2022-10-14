@@ -770,6 +770,14 @@ public class DouyinService {
         DouyinDeviceIid douyinDeviceIid = JSON.parseObject(jdOrderPt.getMark(), DouyinDeviceIid.class);
         String findOrderTime = redisTemplate.opsForValue().get("查询订单次数");
         for (int i = 0; i < Integer.valueOf(findOrderTime); i++) {
+            jdOrderPt = jdOrderPtMapper.selectById(jdOrderPt.getId());
+            if (StrUtil.isNotBlank(jdOrderPt.getOrgAppCk())) {
+                DateTime dateTime = DateUtil.parseDateTime(jdOrderPt.getOrgAppCk());
+                if (DateUtil.offsetMinute(dateTime, -10).getTime() > jdMchOrder.getCreateTime().getTime()) {
+                    log.info("订单号：{}+10分钟都大于创建时间》》》》》》》》已经查询过了。没必要继续查询", jdMchOrder.getTradeNo());
+                    return;
+                }
+            }
             log.info("订单号{}，查询订单循环次数:{}", jdMchOrder.getTradeNo(), i);
             if (i >= 10) {
                 Set<String> keys = redisTemplate.keys("抖音锁定设备:*");
