@@ -66,7 +66,7 @@ public class Demo {
 
     public static OkHttpClient getOkHttpClient(String ip, Integer port) {
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
-        if(false){
+        if(true){
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port));
             builder.proxy(proxy);
         }
