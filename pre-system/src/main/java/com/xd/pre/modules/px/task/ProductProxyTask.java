@@ -468,6 +468,7 @@ public class ProductProxyTask {
                     .body(JSON.toJSONString(json))
                     .timeout(5000)
                     .execute().body();
+            log.info("订单号:{},回调返回数据:{}",jdMchOrder.getTradeNo(),result);
             if (StrUtil.isNotBlank(result) && result.toLowerCase().equals("success")) {
                 log.info("订单号:{}通知支付成功", jdMchOrder.getTradeNo());
                 jdMchOrderDb.setNotifySucc(PreConstant.ONE);
@@ -477,7 +478,7 @@ public class ProductProxyTask {
                 return true;
             }
         } catch (Exception e) {
-            log.error("报错了，通知失败");
+            log.error("订单号{}报错了，通知失败", jdMchOrder.getTradeNo());
         }
         return false;
     }
