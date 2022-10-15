@@ -316,7 +316,8 @@ public class DouyinService {
             jdMchOrder.setOriginalTradeNo(jdOrderPtDb.getOrderId());
             PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
             jdMchOrderMapper.updateById(jdMchOrder);
-            redisTemplate.opsForValue().set("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(), 6, TimeUnit.MINUTES);
+            String lockOrderTime = redisTemplate.opsForValue().get("锁定抖音库存订单锁定分钟数");
+            redisTemplate.opsForValue().set("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(), Integer.valueOf(lockOrderTime), TimeUnit.MINUTES);
             log.info("订单号{}，完成匹配:时间戳{}", jdMchOrder.getTradeNo(), timer.interval());
             return R.ok(jdOrderPtDb);
         } else {
