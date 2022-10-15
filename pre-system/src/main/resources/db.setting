@@ -1,0 +1,24 @@
+#------------------------------------------------------------------------------------------
+## 基本配置信息
+# JDBC URL，根据不同的数据库，使用相应的JDBC连接字符串
+url = jdbc:mysql://210.16.122.100:3306/pre?useUnicode=true&useSSL=false&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useAffectedRows=true&allowMultiQueries=true
+# 用户名，此处也可以使用 user 代替
+username = root
+# 密码，此处也可以使用 pass 代替
+password = 1Q2W3E4Rasdf%
+# JDBC驱动名，可选（Hutool会自动识别）
+driver = com.mysql.jdbc.Driver
+# 最小闲置连接数
+minimumIdle = 2
+# 连接池中允许的最大连接数。缺省值：10；推荐的公式：((core_count * 2) + effective_spindle_count)
+maximumPoolSize = 5
+
+## 可选配置
+# 是否在日志中显示执行的SQL
+showSql = true
+# 是否格式化显示的SQL
+formatSql = false
+# 是否显示SQL参数
+showParams = true
+# 打印SQL的日志等级，默认debug
+sqlLevel = info

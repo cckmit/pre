@@ -18,23 +18,51 @@ import java.util.Map;
 @Slf4j
 public class DouYNew {
     public static void main(String[] args) throws Exception {
-/*        String device_id = "3430899074205405";
-        String iid = "4341303871305134";*/
-        String device_id = "3039482109238904";
-        String iid = "2670046201780760";
+
+  /*    String device_id = "3496879052572183";
+        String iid = "1983951053784861";
+        String ck = "sid_tt=140a336dd81551eaa30bc0e9e8d336fd;";//我的账号
+        */
+/*        String device_id = "device_id_str=395471702731629";
+        String iid = "install_id_str=3936683709967309";
+        String ck = "sid_tt=e14aeb9bf964c67040d69e62fe6082b3;";*/
+
+
+/*        String device_id = "device_id_str=4288526263274574";
+        String iid = "install_id_str=1385815566978734";
+        String ck = "sid_tt=a72737227f6a2f24471827aa74924cc4;";*/
 
         Integer payType = 2;
         String payIp = "183.11.12.172";
+/*
+        String device_id = "device_id_str=729717026068446";
+        String iid = "install_id_str=770090229574599";
+        String ck = "sid_tt=27485c2d482d15e1812bfcfaefdb5fbd;";*/
+/*        String device_id = "device_id_str=2335794807449870";
+        String iid = "install_id_str=1350632389747998";
+        String ck = "sid_tt=94826d4ba343e649910a64b4f8168ed5;";*/
+/*        String device_id = "device_id_str=3817920068335960";
+        String iid = "install_id_str=3215404117004782";
+        String ck = "sid_tt=641b46a1f5f66bb7c23ee252d9787805;";*/
+        String device_id = "device_id_str=4499633908752878";
+        String iid = "install_id_str=2634862189901805";
+        String ck = "sid_tt=d337e16db3483f51fb656d94542b2f9c;";
 
-//        String ck = "sid_tt=936e154a11e17dd7a78293bb6d4602e6;ttreq=1$0016d53561ce47b78a86fa271e75699549ce506d";
-        String ck = "sid_tt=140a336dd81551eaa30bc0e9e8d336fd;";
-               BuyRenderParamDto buyRenderParamDto = BuyRenderParamDto.builder().product_id("3556357046087622442").sku_id("1736502463777799").author_id("4051040200033531")
-                .ecom_scene_id("1041").shop_id("GceCTPIk").origin_id("4051040200033531_3556357046087622442").origin_type("3002070010").new_source_type("product_detail").build();
+
+        if (device_id.contains("device_id_str=")) {
+            device_id = device_id.replace("device_id_str=", "");
+        }
+        if (iid.contains("install_id_str=")) {
+            iid = iid.replace("install_id_str=", "");
+        }
+/*        BuyRenderParamDto buyRenderParamDto = BuyRenderParamDto.builder().product_id("3556357046087622442").sku_id("1736502463777799").author_id("4051040200033531")
+                .ecom_scene_id("1041").shop_id("GceCTPIk").origin_id("4051040200033531_3556357046087622442").origin_type("3002070010")
+                .new_source_type("product_detail").build();*/
 /*        BuyRenderParamDto buyRenderParamDto = BuyRenderParamDto.builder().product_id("3561751789252519688").sku_id("1739136614382624").author_id("4051040200033531")
                 .ecom_scene_id("1003").origin_id("4051040200033531_3561751789252519688").origin_type("3002002002").new_source_type("product_detail").build();*/
-/*        BuyRenderParamDto buyRenderParamDto = BuyRenderParamDto.builder().product_id("3561752220930340544").sku_id("1739136822194211").author_id("4051040200033531")
+        BuyRenderParamDto buyRenderParamDto = BuyRenderParamDto.builder().product_id("3561752220930340544").sku_id("1739136822194211").author_id("4051040200033531")
                 .ecom_scene_id("").origin_id("4051040200033531_3561752220930340544").origin_type("3002002002").shop_id("GceCTPIk").new_source_type("product_detail").build();
-        System.err.println(JSON.toJSONString(buyRenderParamDto));*/
+        System.err.println(JSON.toJSONString(buyRenderParamDto));
 /*     BuyRenderParamDto buyRenderParamDto = BuyRenderParamDto.builder().product_id("3574327743640429367").sku_id("1745277214000191").author_id("4051040200033531")
                 .ecom_scene_id("").origin_id("4051040200033531_3574327743640429367").origin_type("3002002002").new_source_type("product_detail").build();
         System.err.println(JSON.toJSONString(buyRenderParamDto));*/
@@ -44,9 +72,6 @@ public class DouYNew {
         String body = SubmitUtils.buildBuyRenderParamData(buyRenderParamDto);
         Map<String, String> ipAndPort = Douyin3.getIpAndPort();
         OkHttpClient client = Demo.getOkHttpClient(ipAndPort.get("ip"), Integer.valueOf(ipAndPort.get("port")));
-
-
-
 
 
 //        String body = "{\"address\":null,\"platform_coupon_id\":null,\"kol_coupon_id\":null,\"auto_select_best_coupons\":true,\"customize_pay_type\":\"{\\\"checkout_id\\\":1,\\\"bio_type\\\":\\\"1\\\"}\",\"first_enter\":true,\"source_type\":\"1\",\"shape\":0,\"marketing_channel\":\"\",\"forbid_redpack\":false,\"support_redpack\":true,\"use_marketing_combo\":false,\"entrance_params\":\"{\\\"order_status\\\":3,\\\"previous_page\\\":\\\"order_list_page\\\",\\\"carrier_source\\\":\\\"order_detail\\\",\\\"ecom_scene_id\\\":\\\"1041\\\",\\\"room_id\\\":\\\"\\\",\\\"promotion_id\\\":\\\"\\\",\\\"author_id\\\":\\\"\\\",\\\"group_id\\\":\\\"\\\",\\\"anchor_id\\\":\\\"4051040200033531\\\",\\\"source_method\\\":\\\"open_url\\\",\\\"ecom_group_type\\\":\\\"video\\\",\\\"discount_type\\\":\\\"\\\",\\\"full_return\\\":\\\"0\\\",\\\"is_exist_size_tab\\\":\\\"0\\\",\\\"rank_id_source\\\":\\\"\\\",\\\"show_rank\\\":\\\"not_in_rank\\\",\\\"warm_up_status\\\":\\\"0\\\",\\\"coupon_id\\\":\\\"\\\",\\\"brand_verified\\\":\\\"0\\\",\\\"label_name\\\":\\\"\\\",\\\"with_sku\\\":\\\"0\\\",\\\"is_replay\\\":\\\"0\\\",\\\"is_package_sale\\\":\\\"0\\\",\\\"is_groupbuying\\\":\\\"0\\\"}\",\"shop_requests\":[{\"shop_id\":\"GceCTPIk\",\"product_requests\":[{\"product_id\":\"3556357046087622442\",\"sku_id\":\"1736502463777799\",\"sku_num\":1,\"author_id\":\"4051040200033531\",\"ecom_scene_id\":\"1041\",\"origin_id\":\"4051040200033531_3556357046087622442\",\"origin_type\":\"3002070010\",\"new_source_type\":\"product_detail\",\"select_privilege_properties\":[]}]}]}";

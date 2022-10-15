@@ -141,7 +141,9 @@ public class DouyinService {
         if (StrUtil.isBlank(payReUrl)) {
             return null;
         }
-        Boolean ifLockStock = redisTemplate.opsForValue().setIfAbsent("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(), 6, TimeUnit.MINUTES);
+        String lockOrderTime = redisTemplate.opsForValue().get("锁定抖音库存订单锁定分钟数");
+        Boolean ifLockStock = redisTemplate.opsForValue().setIfAbsent("锁定抖音库存订单:" + jdOrderPtDb.getId(), jdMchOrder.getTradeNo(),
+                Integer.valueOf(lockOrderTime), TimeUnit.MINUTES);
         if (!ifLockStock) {
             log.error("订单号{}，有人已经使用库存,请查看数据库msg:{}", jdMchOrder.getTradeNo(), jdMchOrder.getTradeNo());
             return null;
@@ -263,6 +265,13 @@ public class DouyinService {
         }
         JdMchOrder jdMchOrderDb = jdMchOrderMapper.selectById(jdMchOrder.getId());
         List<DouyinDeviceIid> douyinDeviceIUseids = getDouyinDeviceIids(jdMchOrder);
+        if (CollUtil.isEmpty(douyinDeviceIUseids)) {
+            String deviceBangDing = redisTemplate.opsForValue().get("抖音和设备号关联:" + douyinAppCk.getUid());
+            log.info("订单号:{},查询是否有管理ck，日光没有就没有必要继续了:{}", jdMchOrder.getTradeNo(), deviceBangDing);
+            if (StrUtil.isBlank(deviceBangDing)) {
+                return null;
+            }
+        }
         String config = storeConfig.getConfig();
         BuyRenderParamDto buyRenderParamDto = JSON.parseObject(config, BuyRenderParamDto.class);
         log.info("订单号{}，开始下单,执行双端支付信息msg:{}", jdMchOrder.getTradeNo());
@@ -328,9 +337,9 @@ public class DouyinService {
         JdMchOrder jdMchOrderDb = jdMchOrderMapper.selectById(jdMchOrder.getId());
         Integer douyinDeviceIidSize = 2;
         if (ObjectUtil.isNotNull(jdMchOrderDb)) {
-            douyinDeviceIidSize = 2;
+            douyinDeviceIidSize = 5;
         } else {
-            douyinDeviceIidSize = 10;
+            douyinDeviceIidSize = 5;
         }
         int[] deviceRInts = PreUtils.randomCommon(0, douyinDeviceIids.size() - 1, douyinDeviceIids.size() - 1 > douyinDeviceIidSize ? douyinDeviceIidSize : douyinDeviceIids.size() - 1);
         List<DouyinDeviceIid> douyinDeviceIUseids = new ArrayList();
@@ -346,7 +355,15 @@ public class DouyinService {
                 }
                 douyinDeviceIidMapper.updateById(douyinDeviceIid);
             }
-            douyinDeviceIUseids.add(douyinDeviceIid);
+            Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 3, TimeUnit.MINUTES);
+            if (ifAbsent) {
+                douyinDeviceIUseids.add(douyinDeviceIid);
+            }
+            if (CollUtil.isNotEmpty(douyinDeviceIids) && douyinDeviceIids.size() > 2) {
+                log.info("订单号：{}，当前设备信息{}", jdMchOrder.getTradeNo(), JSON.toJSONString(douyinDeviceIids));
+                return douyinDeviceIUseids;
+            }
+
         }
         return douyinDeviceIUseids;
     }
