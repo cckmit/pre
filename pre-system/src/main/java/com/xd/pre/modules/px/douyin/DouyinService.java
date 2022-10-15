@@ -642,8 +642,12 @@ public class DouyinService {
                         timer.interval(),
                         bodyRes1);
                 if (bodyRes1.contains("order_id")) {
+                    log.info("订单号:{},设备号重复使用查询和删除", jdMchOrder.getTradeNo());
+                    deleteLockCk(douyinAppCk, douyinDeviceIid);
+                    redisTemplate.opsForValue().set("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 2000, TimeUnit.HOURS);
                     redisTemplate.opsForValue().set("抖音锁定设备:" + douyinDeviceIid.getId(), JSON.toJSONString(douyinDeviceIid), 2000, TimeUnit.HOURS);
                     log.info("订单号:{},当前设备号和uid绑定其他人不能使用msg:{}", jdMchOrder.getTradeNo(), douyinDeviceIid.getId());
+                    redisTemplate.opsForValue().set("抖音和设备号关联:" + douyinAppCk.getUid(), JSON.toJSONString(douyinDeviceIid), 2000, TimeUnit.HOURS);
                     redisTemplate.opsForValue().set("抖音和设备号关联:" + douyinAppCk.getUid(), JSON.toJSONString(douyinDeviceIid), 2000, TimeUnit.HOURS);
                     String proxyString = client.proxy().toString().split("HTTP @ /")[1];
                     String ip = proxyString.split(":")[0];
@@ -694,6 +698,22 @@ public class DouyinService {
             }
         }
         return null;
+    }
+
+    private void deleteLockCk(DouyinAppCk douyinAppCk, DouyinDeviceIid douyinDeviceIid) {
+        Set<String> keys = redisTemplate.keys("抖音和设备号关联:*");
+        if (CollUtil.isNotEmpty(keys)) {
+            for (String key : keys) {
+                String s = redisTemplate.opsForValue().get(key);
+                if (StrUtil.isNotBlank(s)) {
+                    DouyinDeviceIid douyinDeviceIidLock = JSON.parseObject(s, DouyinDeviceIid.class);
+                    if (douyinDeviceIidLock.getId().equals(douyinDeviceIid.getId()) && !key.contains(douyinAppCk.getUid())) {
+                        log.info("删除错误的管理关系:{},应该是:{},{}", key, douyinAppCk.getUid(), douyinDeviceIid.getDeviceId());
+                        redisTemplate.delete(key);
+                    }
+                }
+            }
+        }
     }
 
     public BuyRenderRoot getAndBuildBuyRender(OkHttpClient client, DouyinAppCk douyinAppCk, BuyRenderParamDto buyRenderParamDto,

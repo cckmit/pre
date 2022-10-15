@@ -6,7 +6,8 @@ import redis.clients.jedis.Jedis;
 public class Test {
     public static void main(String[] args) {
         Jedis jedis = RedisDS.create().getJedis();
-        String s = jedis.get("抖音和设备号关联:1051563615585283");
-        System.out.println(s);
+        Integer a = 223232;
+        Integer b = 223232;
+        System.out.println(a.equals(b));
     }
 }
