@@ -220,7 +220,7 @@ public class DouyinService {
                 DouyinAppCk douyinAppCkT = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
                 String ed = redisTemplate.opsForValue().get("抖音各个账号剩余额度:" + douyinAppCkT.getUid());
                 if (StrUtil.isNotBlank(ed) && Integer.valueOf(ed) >= storeConfig.getSkuPrice().intValue()) {
-                    if (let >= Integer.valueOf(ed)) {
+                    if (let >= Integer.valueOf(ed) && Integer.valueOf(ed) == 200) {
                         let = Integer.valueOf(ed);
                         douyinAppCk = douyinAppCkT;
                     }
@@ -232,19 +232,17 @@ public class DouyinService {
                     return douyinAppCk;
                 }
             }
-        } else {
-            Page<DouyinAppCk> douyinAppCkPage = new Page<>(pageIndex, PreConstant.ONE);
-            PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
-            douyinAppCkPage = douyinAppCkMapper.selectPage(douyinAppCkPage, wrapper);
-            DouyinAppCk douyinAppCk = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
-            log.info("订单号{}，当前执行的ckmsg:{}", jdMchOrder.getTradeNo(), JSON.toJSONString(douyinAppCk));
-            Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音ck锁定3分钟:" + douyinAppCk.getUid(), JSON.toJSONString(douyinAppCk), lockDouYinCkTime, TimeUnit.MINUTES);
-            if (ifAbsent) {
-                return douyinAppCk;
-            }
+        }
+        Page<DouyinAppCk> douyinAppCkPage = new Page<>(pageIndex, PreConstant.ONE);
+        PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
+        douyinAppCkPage = douyinAppCkMapper.selectPage(douyinAppCkPage, wrapper);
+        DouyinAppCk douyinAppCk = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
+        log.info("订单号{}，当前执行的ckmsg:{}", jdMchOrder.getTradeNo(), JSON.toJSONString(douyinAppCk));
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音ck锁定3分钟:" + douyinAppCk.getUid(), JSON.toJSONString(douyinAppCk), lockDouYinCkTime, TimeUnit.MINUTES);
+        if (ifAbsent) {
+            return douyinAppCk;
         }
         return null;
-
     }
 
     public Integer getPayType() {
