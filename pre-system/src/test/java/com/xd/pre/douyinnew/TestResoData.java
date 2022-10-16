@@ -45,8 +45,8 @@ public class TestResoData {
         String notUse = "56eb748c437c01e1932423dbe0a32015;936e154a11e17dd7a78293bb6d4602e6;8bddce4a0b88b7b33ad34419b8f7febb;12016212c714adb3acfc1a1c586f7c62;" +
                 "ee8c10ff32bdbb4263aa051b43f987d1;33f2eb6aef641d58b7859f6ef4403e05;a0ee1313a37eea915763ec5da6012726;" +
                 "6bf923d1af1c9fe3be9e03dea311382e;";
-        List<Entity> appCks = db.use().query("select * from douyin_app_ck where file_name ='douyinappck14.txt' and id >=562");
-        List<Entity> devicesBds = db.use().query("select * from douyin_device_iid where fail_reason like '%2022-10-16%' and id > 2060");
+        List<Entity> appCks = db.use().query("select * from douyin_app_ck where is_enable =0 ");
+        List<Entity> devicesBds = db.use().query("select * from douyin_device_iid where  id > 2251");
         for (Entity entity : appCks) {
             String uid = entity.getStr("uid");
             String ck_device_lock = jedis.get("抖音和设备号关联:" + uid);
@@ -95,12 +95,17 @@ public class TestResoData {
                     }
                     boolean b = mian1(device_id, iid, ck, devicesBd.getInt("id"), entity.getStr("uid"));
                     if (b) {
+                        db.use().execute("update douyin_app_ck set is_enable = ? where id = ?", 1, entity.getInt("id"));
                         log.info(">>>>>>>>>>>>>>>>>>>>>执行成功当前顺序:{},{}", entity.getStr("id"), devicesBd.getInt("id"));
                     }
                 } catch (Exception e) {
                     try {
                         boolean b = mian1(device_id, iid, ck, devicesBd.getInt("id"), entity.getStr("uid"));
-                    }catch (Exception e1){
+                        if (b) {
+                            log.info(">>>>>>>>>>>>>>>>>>>>>执行成功当前顺序:{},{}", entity.getStr("id"), devicesBd.getInt("id"));
+                            db.use().execute("update douyin_app_ck set is_enable = ? where id = ?", 1, entity.getInt("id"));
+                        }
+                    } catch (Exception e1) {
                     }
                     log.error("========================:{}", e);
                 }
@@ -164,6 +169,9 @@ public class TestResoData {
         String resBody = response.body().string();
         log.info("预下单数据msg:{}", resBody);
         response.close();
+        if (resBody.contains("失败")) {
+            db.use().execute("update douyin_app_ck set is_enable = ? where uid = ?", -1, uid);
+        }
         BuyRenderRoot buyRenderRoot = JSON.parseObject(JSON.parseObject(resBody).getString("data"), BuyRenderRoot.class);
         String url1 = "https://ec.snssdk.com/order/newcreate/vtl?can_queue=1&b_type_new=2&request_tag_from=lynx&os_api=5&device_type=ELE-AL00&ssmix=a&manifest_version_code=170301&dpi=240&is_guest_mode=0&uuid=354730528931234&app_name=aweme&version_name=17.3.0&ts=1664384138&cpu_support64=false&app_type=normal&appTheme=dark&ac=wifi&host_abi=armeabi-v7a&update_version_code=17309900&channel=dy_tiny_juyouliang_dy_and24&device_platform=android&iid=" + iid + "&version_code=170300&cdid=78d30492-1201-49ea-b86a-1246a704711d&os=android&is_android_pad=0&openudid=27b54460b6dbb870&device_id=" + device_id + "&resolution=720*1280&os_version=7.1.1&language=zh&device_brand=samsung&aid=1128&minor_status=0&mcc_mnc=46007";
         String bodyData1 = String.format("{\"area_type\":\"169\",\"receive_type\":1,\"travel_info\":{\"departure_time\":0,\"trave_type\":1,\"trave_no\":\"\"}," +
