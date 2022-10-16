@@ -812,7 +812,7 @@ public class DouyinService {
             jdOrderPt = jdOrderPtMapper.selectById(jdOrderPt.getId());
             if (StrUtil.isNotBlank(jdOrderPt.getOrgAppCk())) {
                 DateTime dateTime = DateUtil.parseDateTime(jdOrderPt.getOrgAppCk());
-                if (DateUtil.offsetMinute(dateTime, -10).getTime() > jdMchOrder.getCreateTime().getTime()) {
+                if (DateUtil.offsetMinute(dateTime, -12).getTime() > jdMchOrder.getCreateTime().getTime()) {
                     log.info("订单号：{}+10分钟都大于创建时间》》》》》》》》已经查询过了。没必要继续查询", jdMchOrder.getTradeNo());
                     return;
                 }
