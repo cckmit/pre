@@ -103,7 +103,8 @@ public class DouyinService {
         String payReUrl = "";
         if (CollUtil.isNotEmpty(jdOrderPtStocks)) {
             log.info("订单号:{}.使用库存", jdMchOrder.getTradeNo());
-            sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(storeConfig), 20);
+            sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(storeConfig), 10);
+            sendMessageSenc(product_douyin_stock_queue, JSON.toJSONString(storeConfig), 10);
             return douyinUseStock(jdMchOrder, storeConfig, jdLog, timer, client, jdOrderPtStocks, payReUrl);
         } else {
             log.info("订单号:{}.异步生成一下订单", jdMchOrder.getTradeNo());
