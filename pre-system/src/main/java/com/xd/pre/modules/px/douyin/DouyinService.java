@@ -790,6 +790,11 @@ public class DouyinService {
             log.info("订单号:{}没有访问数据。不需要查询", jdMchOrder.getTradeNo());
             return;
         }
+        //TODO 小于30秒不查询   创建时间+40 >当前时间不需要查询
+        if (DateUtil.offsetSecond(jdMchOrder.getCreateTime(), 40).getTime() > new Date().getTime()) {
+            log.info("订单号:{},在40秒之内。不用查询", jdMchOrder.getTradeNo());
+            return;
+        }
         Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("当前查询订单:" + jdMchOrder.getTradeNo(), JSON.toJSONString(jdOrderPt), 1, TimeUnit.MINUTES);
         if (!ifAbsent) {
             log.info("当前订单,{},已经被锁定。请骚后查询", jdMchOrder.getTradeNo());
