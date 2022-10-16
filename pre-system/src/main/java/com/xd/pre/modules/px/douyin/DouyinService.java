@@ -791,7 +791,7 @@ public class DouyinService {
             return;
         }
         //TODO 小于30秒不查询   创建时间+40 >当前时间不需要查询
-        if (DateUtil.offsetSecond(jdMchOrder.getCreateTime(), 40).getTime() > new Date().getTime()) {
+        if (DateUtil.offsetSecond(jdMchOrder.getCreateTime(), 30).getTime() > new Date().getTime()) {
             log.info("订单号:{},在40秒之内。不用查询", jdMchOrder.getTradeNo());
             return;
         }
