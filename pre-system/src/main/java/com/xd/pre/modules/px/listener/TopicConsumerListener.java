@@ -318,7 +318,7 @@ public class TopicConsumerListener {
                 log.info("超过库存。不用生产");
                 return;
             }
-            Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音生产订单刚刚放入最大小号数", "1", 5, TimeUnit.SECONDS);
+            Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent("抖音生产订单刚刚放入最大小号数:" + jdAppStoreConfig.getId(), "1", 5, TimeUnit.SECONDS);
             if (!ifAbsent) {
                 log.info("刚刚放入。不需要再放");
                 return;
