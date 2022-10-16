@@ -211,7 +211,7 @@ public class DouyinService {
         }
         if (storeConfig.getGroupNum() == PreConstant.EIGHT && CollUtil.isNotEmpty(accounts)) {
             DouyinAppCk douyinAppCk = null;
-            Integer let = 2000;
+            Integer let = Integer.valueOf(redisTemplate.opsForValue().get("抖音苹果卡最大下单金额"));
             for (Integer account : accounts) {
                 Page<DouyinAppCk> douyinAppCkPage = new Page<>(account, PreConstant.ONE);
                 PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
@@ -219,7 +219,7 @@ public class DouyinService {
                 DouyinAppCk douyinAppCkT = douyinAppCkPage.getRecords().get(PreConstant.ZERO);
                 String ed = redisTemplate.opsForValue().get("抖音各个账号剩余额度:" + douyinAppCkT.getUid());
                 if (StrUtil.isNotBlank(ed) && Integer.valueOf(ed) >= storeConfig.getSkuPrice().intValue()) {
-                    if (let > Integer.valueOf(ed)) {
+                    if (let >= Integer.valueOf(ed)) {
                         let = Integer.valueOf(ed);
                         douyinAppCk = douyinAppCkT;
                     }
@@ -663,7 +663,7 @@ public class DouyinService {
                     log.info("订单号{}，当前订单号msg:{}", jdMchOrder.getTradeNo(), orderId);
                     redisTemplate.opsForValue().increment("抖音设备号成功次数:" + douyinDeviceIid.getDeviceId());
                     redisTemplate.opsForValue().increment("抖音账号成功次数:" + douyinAppCk.getUid());
-                    douyinDeviceIid.setSuccess(douyinDeviceIid.getSuccess() + 1);
+                    douyinDeviceIid.setSuccess(douyinDeviceIid.getSuccess() == null ? 1 : douyinDeviceIid.getSuccess() + 1);
                     log.info("订单号:{}设置上次成功时间msg:{}", jdMchOrder.getTradeNo(), new Date().toLocaleString());
                     douyinDeviceIid.setLastSuccessTime(new Date());
                     douyinDeviceIidMapper.updateById(douyinDeviceIid);
@@ -955,8 +955,8 @@ public class DouyinService {
     private Integer douyinMaxPrice() {
         String douyinMaxPrice = redisTemplate.opsForValue().get("抖音苹果卡最大下单金额");
         if (StrUtil.isBlank(douyinMaxPrice)) {
-            redisTemplate.opsForValue().set("抖音苹果卡最大下单金额", "2000");
-            return 2000;
+            redisTemplate.opsForValue().set("抖音苹果卡最大下单金额", "5000");
+            return 5000;
         } else {
             return Integer.valueOf(douyinMaxPrice);
         }
