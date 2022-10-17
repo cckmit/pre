@@ -468,9 +468,10 @@ public class DouyinService {
                 log.info("订单号:{},查询成功设置阿里支付数据成功,查询成功", jdMchOrder.getTradeNo());
             }
             response.close();
+            String local = redisTemplate.opsForValue().get("服务器地址");
             //alipays://platformapi/startapp?appId=20000067&url=http%3A%2F%2F134.122.134.69%3A8082%2Frecharge%2Fzfb%3Forder_id%3DSP2210012316069040391319127864
             String payReUrl = String.format("alipays://platformapi/startapp?appId=20000067&url=%s",
-                    URLEncoder.encode("http://210.16.122.100/api/alipay/payHtml?orderId=" + jdMchOrder.getTradeNo()));
+                    URLEncoder.encode("http://" + local + "/api/alipay/payHtml?orderId=" + jdMchOrder.getTradeNo()));
             log.info("订单号{}，封装url数据为msg:{}", jdMchOrder.getTradeNo(), payReUrl);
             return payReUrl;
         } catch (Exception e) {
