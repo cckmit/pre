@@ -12,7 +12,7 @@ public class TestDemo {
 
 
     public static void main(String[] args) {
-        List<String> STRINGS = FileUtil.readLines("C:\\Users\\Administrator\\Desktop\\douyinck\\10.14 200账号.txt", "UTF-8");
+        List<String> STRINGS = FileUtil.readLines("C:\\Users\\Administrator\\Desktop\\douyinck\\10.17 506号.txt", "UTF-8");
         StringBuilder stringBuilder = new StringBuilder();
         for (String line : STRINGS) {
             boolean contains = line.contains("Set-Cookie:") && line.contains("sid_tt=");
