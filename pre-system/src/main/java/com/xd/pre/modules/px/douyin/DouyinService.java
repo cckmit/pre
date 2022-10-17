@@ -127,7 +127,7 @@ public class DouyinService {
         PreTenantContextHolder.setCurrentTenantId(jdMchOrder.getTenantId());
         JdOrderPt jdOrderPtDb = jdOrderPtStocks.get(PreUtils.randomCommon(0, jdOrderPtStocks.size() - 1, 1)[0]);
         PayDto payDto = JSON.parseObject(jdOrderPtDb.getMark(), PayDto.class);
-        log.info("订单号:{},有库存", jdMchOrder.getTradeNo());
+        log.info("订单号:{},有库存,匹配的订单内置订单号是:{},", jdMchOrder.getTradeNo(), jdOrderPtDb.getOrderId());
         for (int i = 0; i < 3; i++) {
             log.info("订单号：{}第{}，次循环", jdMchOrder.getTradeNo(), i);
             payReUrl = payByOrderId(client, payDto, jdLog, jdMchOrder);
